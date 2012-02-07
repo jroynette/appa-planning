@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+	maxBytesLocalHeap="100m">
+
+<!-- 	<defaultCache maxElementsInMemory="1000" eternal="false" -->
+<!-- 		timeToIdleSeconds="0" timeToLiveSeconds="120" overflowToDisk="false" -->
+<!-- 		memoryStoreEvictionPolicy="LRU" /> -->
+
+	<cache
+		name="org.appa.planning.bo.Utilisateur"
+		timeToIdleSeconds="60"
+		timeToLiveSeconds="3600"
+		eternal="false"
+		overflowToDisk="false"
+		diskPersistent="false"
+		/>
+
+<!-- 	<cache name="org.hibernate.cache.StandardQueryCache" -->
+<!-- 		maxElementsInMemory="5" eternal="false" timeToLiveSeconds="120" -->
+<!-- 		overflowToDisk="true" memoryStoreEvictionPolicy="LRU"/> -->
+
+</ehcache>

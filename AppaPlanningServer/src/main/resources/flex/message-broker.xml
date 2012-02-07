@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.5.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<flex:message-broker>
+	
+<!-- 		<flex:message-interceptor ref="messageInterceptor"/> -->
+<!-- 		<flex:config-processor ref="myConfigProcessor"/> -->
+	
+<!-- 	<flex:secured login-command="myLoginCommand" invalidate-http-session="true"> -->
+<!-- 	</flex:secured> -->
+	
+<!-- 	<flex:secured  invalidate-http-session="true"/> -->
+		
+	</flex:message-broker>
+	
+<!-- 	<bean id="messageInterceptor" class="org.appa.planning.util.MyMessageInterceptor"> -->
+<!-- 		<property name="userContext" ref="currentUserContext"></property> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="myConfigProcessor" class="org.appa.planning.util.MyConfigProcessor"/> -->
+
+<!-- 	<bean id="myLoginCommand" class="org.appa.planning.util.MyLoginCommand"> -->
+<!-- 		<constructor-arg ref="org.springframework.security.authenticationManager" /> -->
+<!-- 		<property name="logoutHandlers"> -->
+<!-- 			<list> -->
+<!-- 				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+
+	
+</beans>
