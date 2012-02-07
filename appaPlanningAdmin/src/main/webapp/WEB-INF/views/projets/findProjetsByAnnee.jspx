@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:find finderName="ByAnnee" id="ff_org_appa_planning_bo_Projet" path="/projets" z="pqHuY629WEHUyTjhBkTtOdLNXz4=">
+        <field:input disableFormBinding="true" field="annee" id="f_org_appa_planning_bo_Projet_annee" required="true" validationMessageCode="field_invalid_integer" z="quIsuNG8+IFTwSt7YhF51AfJkNU="/>
+    </form:find>
+</div>

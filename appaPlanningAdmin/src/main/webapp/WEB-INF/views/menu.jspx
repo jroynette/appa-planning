@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:menu="urn:jsptagdir:/WEB-INF/tags/menu" id="menu" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <menu:menu id="_menu" z="nZaf43BjUg1iM0v70HJVEsXDopc=">
+         <menu:category id="c_site" z="5Z1+wiUVSVPmsN5fCUOfHNSOnaE=">
+            <menu:item id="i_site_new" messageCode="global_menu_new" url="/sites?form" z="ewAqg8Z+CTUpvmsxXaCRBnq6+TU="/>
+            <menu:item id="i_site_list" messageCode="global_menu_list" url="/sites?page=1&amp;size=${empty param.size ? 10 : param.size}" z="vhoCo6kXZ4paxcavA4SM71sw7EQ="/>
+        </menu:category>
+         <menu:category id="c_utilisateur" z="PZxVJr/vWVEYN2+lGH6uB6AZJPY=">
+            <menu:item id="i_utilisateur_new" messageCode="global_menu_new" url="/utilisateurs?form" z="DQOcQocDOj6tSNG3tySpzGd/72o="/>
+            <menu:item id="i_utilisateur_list" messageCode="global_menu_list" url="/utilisateurs?page=1&amp;size=${empty param.size ? 10 : param.size}" z="HvxNUlumsb7mlTyJtpjpR91muXw="/>
+        </menu:category>
+        <menu:category id="c_projet" z="oZrqi2UGj4Kr8NKwkyuUy/bKyRc=">
+            <menu:item id="i_projet_new" messageCode="global_menu_new" url="/projets?form" z="oCQ7A4tGYJYRH6lLZoTQUcp6tKc="/>
+            <menu:item id="i_projet_list" messageCode="global_menu_list" url="/projets?page=1&amp;size=${empty param.size ? 10 : param.size}" z="CXv23i1xYO0IySSgPhHO7sIpTj0="/>
+            <menu:item id="fi_projet_annee" messageCode="global_menu_find" url="/projets?find=ByAnnee&amp;form" z="gr0lpV8TolNkJBG6d5SLHOqut58="/>
+        </menu:category>
+    </menu:menu>
+</div>

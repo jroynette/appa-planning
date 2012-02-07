@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show delete="false" id="ps_org_appa_planning_bo_Projet" object="${projet}" path="/projets" z="user-managed">
+        <field:display field="nom" id="s_org_appa_planning_bo_Projet_nom" object="${projet}" z="e4KsMiIa246dKyAA8xJCkXGtYp4="/>
+        <field:display field="description" id="s_org_appa_planning_bo_Projet_description" object="${projet}" z="WUCopVa+iNZ4coajEmWtbyggrmE="/>
+        <field:display field="annee" id="s_org_appa_planning_bo_Projet_annee" object="${projet}" z="gr/NhL+izGFEGcVXbHWr1PmMF5M="/>
+    </page:show>
+</div>

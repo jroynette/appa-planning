@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_org_appa_planning_bo_Projet" items="${projets}" z="v5PgyFwg5bh0k2jQUT8tQyKD3/M=">
+        <table:table data="${projets}" delete="false" id="l_org_appa_planning_bo_Projet" path="/projets" z="user-managed">
+            <table:column id="c_org_appa_planning_bo_Projet_nom" maxLength="-1" property="nom" z="user-managed"/>
+            <table:column id="c_org_appa_planning_bo_Projet_annee" maxLength="-1" property="annee" z="user-managed"/>
+            <table:column id="c_org_appa_planning_bo_Projet_description" property="description" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>

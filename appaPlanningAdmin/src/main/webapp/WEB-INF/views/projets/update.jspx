@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_org_appa_planning_bo_Projet" modelAttribute="projet" path="/projets" versionField="Version" z="nNj2erhYX6bh2olkHfJlBb3dBlk=">
+        <field:input field="nom" id="c_org_appa_planning_bo_Projet_nom" max="30" required="true" z="1eyu5aY3xlj8Md4W+uE/M84uJ/E="/>
+        <field:textarea field="description" id="c_org_appa_planning_bo_Projet_description" z="lEf1MZ0ccOFPFwziCY5O5cBFPmU="/>
+        <field:input field="annee" id="c_org_appa_planning_bo_Projet_annee" required="true" validationMessageCode="field_invalid_integer" z="MwQlm8cCPaXWDMb2qtAo+IfMvGw="/>
+    </form:update>
+</div>

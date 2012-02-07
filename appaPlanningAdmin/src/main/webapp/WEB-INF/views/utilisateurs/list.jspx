@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_org_appa_planning_bo_Utilisateur" items="${utilisateurs}" z="suSl6kw5Av0nShq+YtvQ82F2R9I=">
+        <table:table data="${utilisateurs}" id="l_org_appa_planning_bo_Utilisateur" path="/utilisateurs" z="LYnDFvp0HeFZupmep4W8aQyoXpM=">
+            <table:column id="c_org_appa_planning_bo_Utilisateur_nom" maxLength="-1" property="nom" z="user-managed"/>
+            <table:column id="c_org_appa_planning_bo_Utilisateur_prenom" maxLength="-1" property="prenom" z="user-managed"/>
+            <table:column id="c_org_appa_planning_bo_Utilisateur_role" maxLength="-1" property="role" z="user-managed"/>
+            <table:column id="c_org_appa_planning_bo_Utilisateur_login" property="login" render="false" z="user-managed"/>
+            <table:column id="c_org_appa_planning_bo_Utilisateur_email" property="email" render="false" z="user-managed"/>
+            <table:column id="c_org_appa_planning_bo_Utilisateur_nbConges" property="nbConges" render="false" z="user-managed"/>
+        </table:table>
+    </page:list>
+</div>

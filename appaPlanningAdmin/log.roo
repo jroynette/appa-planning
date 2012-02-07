@@ -1,0 +1,39 @@
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log opened at 2011-11-20 13:00:10
+project --topLevelPackage org.appa.planning --projectName appaPlanningAdmin --java 6
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log closed at 2011-11-20 13:00:11
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log opened at 2011-11-20 13:00:15
+persistence setup --database HYPERSONIC_PERSISTENT --provider HIBERNATE 
+entity --class ~.bo.Projet
+// [failed] entity --class org.appa.planning.bo.Projet --testAutomatically true
+test integration 
+finder list 
+finder add --finderName findProjetsByAnnee
+web mvc setup
+web mvc all --package org.appa.planning.web
+addon list 
+addon search 
+osgi obr url add --url http://spring-roo-addon-french.googlecode.com/svn/repo/repository.xml
+osgi obr start --bundleSymbolicName org.springframework.roo.addon.french
+osgi obr url remove --url http://spring-roo-addon-french.googlecode.com/svn/repo/repository.xml
+addon install id --searchResultId 06
+web mvc language --code fr 
+logging setup --level INFO 
+// [failed] entity --class org.appa.planning.bo.Projet
+field string --fieldName test --sizeMax 10
+// [failed] perform tests 
+web mvc all --package org.appa.planning.web
+// [failed] enum type --class org.appa.planning.bo.Role
+enum type --class org.appa.planning.bo.UserRole
+enum constant --name ADMIN
+// [failed] enum constant --name USER
+enum constant --name VALIDATEUR
+entity --class org.appa.planning.bo.Site
+// [failed] entity --class org.appa.planning.bo.Utilisateur
+field reference --fieldName site --type org.appa.planning.bo.Site
+web mvc all --package org.appa.planning.web
+security setup
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log closed at 2011-11-20 21:49:41
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log opened at 2011-11-21 08:19:09
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log closed at 2011-11-21 08:34:00
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log opened at 2012-02-03 11:51:36
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log closed at 2012-02-03 16:21:55

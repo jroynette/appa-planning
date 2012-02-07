@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_org_appa_planning_bo_Utilisateur" object="${utilisateur}" path="/utilisateurs" z="7R2wk7X+EfXiuhHGzjxZLBBu3Qk=">
+        <field:display field="login" id="s_org_appa_planning_bo_Utilisateur_login" object="${utilisateur}" z="FTTxvUJx5Y+p/m2DmPl5Zn2wguY="/>
+        <field:display field="nom" id="s_org_appa_planning_bo_Utilisateur_nom" object="${utilisateur}" z="5wIAJ3wZ3SxqeLEFmCGInPaL5UM="/>
+        <field:display field="prenom" id="s_org_appa_planning_bo_Utilisateur_prenom" object="${utilisateur}" z="iSGBf+uHz2KxhcU+CMt6P5xFE1Y="/>
+        <field:display field="email" id="s_org_appa_planning_bo_Utilisateur_email" object="${utilisateur}" z="7fYOFdf4ttNNYllP0FsrnJ6gzI4="/>
+        <field:display field="nbConges" id="s_org_appa_planning_bo_Utilisateur_nbConges" object="${utilisateur}" z="/ruBWUipFAdIb4xqQbCMgYD+Q0Y="/>
+        <field:display field="nbRTT" id="s_org_appa_planning_bo_Utilisateur_nbRTT" object="${utilisateur}" z="usJQrMaGiZcnDPDPXFmcebKsgLE="/>
+        <field:display field="quatrevingt" id="s_org_appa_planning_bo_Utilisateur_quatrevingt" object="${utilisateur}" z="KttItCB0/aOe7nELPBPGHLMwS9k="/>
+        <field:display field="actif" id="s_org_appa_planning_bo_Utilisateur_actif" object="${utilisateur}" z="fOcTy4RPpzE0kVBrU4nQjzDslts="/>
+        <field:display field="role" id="s_org_appa_planning_bo_Utilisateur_role" object="${utilisateur}" z="Bi2kFV4LxCB8n/NMP3qEDWptMqE="/>
+        <field:display field="site" id="s_org_appa_planning_bo_Utilisateur_site" object="${utilisateur}" z="3nKiUp0ZiT4UBjYvsLr3nho8m8M="/>
+    </page:show>
+</div>
