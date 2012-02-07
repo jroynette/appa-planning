@@ -2,6 +2,7 @@ package org.appa.planning.util;
 
 import flex.messaging.FlexSession;
 
+
 public class MyFlexSessionListener implements flex.messaging.FlexSessionListener {
 
 	public void sessionCreated(FlexSession session) {

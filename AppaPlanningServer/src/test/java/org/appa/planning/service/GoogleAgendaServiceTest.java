@@ -1,29 +1,24 @@
 package org.appa.planning.service;
 
-import java.net.URL;
-
-import com.google.gdata.client.calendar.CalendarService;
-import com.google.gdata.data.calendar.CalendarEntry;
-import com.google.gdata.data.calendar.CalendarFeed;
 
 public class GoogleAgendaServiceTest {
 
 	public static void main(String[] args) throws Exception {
 
 		// Create a CalenderService and authenticate
-		CalendarService myService = new CalendarService("test");
-		myService.setUserCredentials("jroynette@gmail.com", "faceback");
+		//		CalendarService myService = new CalendarService("test");
+		//		myService.setUserCredentials("jroynette@gmail.com", "faceback");
 
 
 		// Send the request and print the response
-		URL feedUrl = new URL("https://www.google.com/calendar/feeds/aurore.deconinck%40gmail.com/private/full");
-		CalendarFeed resultFeed = myService.getFeed(feedUrl, CalendarFeed.class);
-		System.out.println("Your calendars:");
-		System.out.println();
-		for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-			CalendarEntry entry = resultFeed.getEntries().get(i);
-			System.out.println("\t" + entry.getTitle().getPlainText());
-		}
+		//		URL feedUrl = new URL("https://www.google.com/calendar/feeds/aurore.deconinck%40gmail.com/private/full");
+		//		CalendarFeed resultFeed = myService.getFeed(feedUrl, CalendarFeed.class);
+		//		System.out.println("Your calendars:");
+		//		System.out.println();
+		//		for (int i = 0; i < resultFeed.getEntries().size(); i++) {
+		//			CalendarEntry entry = resultFeed.getEntries().get(i);
+		//			System.out.println("\t" + entry.getTitle().getPlainText());
+		//		}
 		//
 		//
 		//		CalendarEventEntry myEntry = new CalendarEventEntry();
