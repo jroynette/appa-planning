@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-	<beans profile="export">
+	<beans profile="export-schema">
 		<jdbc:embedded-database id="dataSource" type="H2"/>
 
 		<bean id="jpaAdapter"
@@ -20,7 +20,7 @@
 		</bean>
 	</beans>
 
-	<beans profile="dev,test">
+	<beans profile="dev">
 		<jdbc:embedded-database id="dataSource" type="H2">
 			<jdbc:script location="classpath:db/schema.sql" />
 			<jdbc:script location="classpath:db/data.sql" />
@@ -34,7 +34,7 @@
 		</bean>
 	</beans>
 	
-	<beans profile="prod">
+	<beans profile="cloud">
 		<jdbc:embedded-database id="dataSource" type="H2">
 			<jdbc:script location="classpath:/db/schema.sql" />
 			<jdbc:script location="classpath:/db/data.sql" />
@@ -47,4 +47,5 @@
 			<property name="database" value="HSQL" />
 		</bean>
 	</beans>
+	
 </beans>

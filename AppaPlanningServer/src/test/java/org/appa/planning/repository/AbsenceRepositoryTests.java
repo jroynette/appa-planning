@@ -18,11 +18,8 @@ public class AbsenceRepositoryTests extends AbstractJunitTests {
 	@Autowired
 	private AbsenceRepository absenceRepository;
 
-	@Override
 	@Before
 	public void setup() throws Exception {
-
-		super.setup();
 
 		dataGenerator.createAbsence(TypeAbsence.CONGE, StatutAbsence.POSE, "01/01/2011", "05/01/2011", "user1");
 		dataGenerator.createAbsence(TypeAbsence.RTT, StatutAbsence.VALIDE, "10/01/2011", "11/01/2011", "user1");

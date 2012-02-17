@@ -1,4 +1,4 @@
-package org.appa.planning.bo;
+package org.appa.planning.vo;
 
 import java.io.Serializable;
 
@@ -26,6 +26,16 @@ public class LigneReportingProjet implements Serializable{
 	 * nom du projet
 	 */
 	private Integer temps;
+
+	public LigneReportingProjet() {
+	}
+
+	public LigneReportingProjet(String projet, String utilisateur, Long temps) {
+		super();
+		this.projet = projet;
+		this.utilisateur = utilisateur;
+		this.temps = temps.intValue();
+	}
 
 	public String getProjet() {
 		return projet;

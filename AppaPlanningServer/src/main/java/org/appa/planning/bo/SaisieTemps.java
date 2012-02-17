@@ -46,16 +46,13 @@ public class SaisieTemps implements Serializable {
 	@Column
 	private Date date;
 
-	@NotNull
-	@Column
-	private SaisieTempsPeriode periode;
+	//@NotNull
+	//@Column
+	//private SaisieTempsPeriode periode;
 
 	@NotNull
 	@Column
-	private Integer temps;
-
-	@Column
-	private Boolean dejExterne = false;
+	private Integer heures;
 
 	@Column
 	@Size(max = 100)
@@ -86,15 +83,6 @@ public class SaisieTemps implements Serializable {
 		this.date = date;
 	}
 
-
-	public Boolean getDejExterne() {
-		return dejExterne;
-	}
-
-	public void setDejExterne(Boolean dejExterne) {
-		this.dejExterne = dejExterne;
-	}
-
 	public Projet getProjet() {
 		return projet;
 	}
@@ -103,20 +91,12 @@ public class SaisieTemps implements Serializable {
 		this.projet = projet;
 	}
 
-	public SaisieTempsPeriode getPeriode() {
-		return periode;
+	public Integer getHeures() {
+		return heures;
 	}
 
-	public void setPeriode(SaisieTempsPeriode periode) {
-		this.periode = periode;
-	}
-
-	public Integer getTemps() {
-		return temps;
-	}
-
-	public void setTemps(Integer temps) {
-		this.temps = temps;
+	public void setHeures(Integer heures) {
+		this.heures = heures;
 	}
 
 	public String getCommentaire() {

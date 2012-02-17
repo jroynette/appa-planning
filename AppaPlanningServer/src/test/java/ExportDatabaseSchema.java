@@ -14,10 +14,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
-@ContextConfiguration(locations={"/spring/app-context.xml","/spring/datasource.xml"})
+@ContextConfiguration(locations={"/spring/app-context.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback=true)
-@ActiveProfiles("export")
+@ActiveProfiles("export-schema")
 public class ExportDatabaseSchema {
 
 	@Resource(name="&entityManagerFactory")
@@ -33,7 +33,7 @@ public class ExportDatabaseSchema {
 		Configuration configuration = new Ejb3Configuration().configure( persistenceUnitInfo, jpaPropertyMap ).getHibernateConfiguration();
 
 		SchemaExport schema = new SchemaExport(configuration);
-		schema.setOutputFile("C:/J2EE/STS/wks/git/gitRepo/AppaPlanningServer/src/main/resources/schema.sql");
+		schema.setOutputFile("C:/J2EE/git/appa-planning/AppaPlanningServer/src/main/resources/db/schema.sql");
 		schema.create(false, false);
 	}
 }

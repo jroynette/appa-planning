@@ -7,21 +7,17 @@
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>
-                        classpath:spring/app-context.xml
-                        classpath:spring/datasource.xml
-                        classpath:spring/security.xml
-                </param-value>
+		<param-value>classpath:spring/app-context.xml</param-value>
 	</context-param>
 
 	<context-param>
 		<param-name>spring.profiles.active</param-name>
-        <param-value>dev,testdatas</param-value>
+        <param-value>dev</param-value>
 	</context-param>
 
-	<session-config>
-		<session-timeout>1</session-timeout>
-	</session-config>
+<!-- 	<session-config> -->
+<!-- 		<session-timeout>1</session-timeout> -->
+<!-- 	</session-config> -->
 
 	<listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
@@ -60,17 +56,17 @@
 		<url-pattern>/messagebroker/*</url-pattern>
 	</servlet-mapping>
 
-	<filter>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
+<!-- 	<filter> -->
+<!-- 		<filter-name>springSecurityFilterChain</filter-name> -->
+<!-- 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> -->
+<!-- 	</filter> -->
 
-	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<url-pattern>/messagebroker/*</url-pattern>
-	</filter-mapping>
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>springSecurityFilterChain</filter-name> -->
+<!-- 		<url-pattern>/messagebroker/*</url-pattern> -->
+<!-- 	</filter-mapping> -->
 
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 </web-app>

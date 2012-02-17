@@ -1,4 +1,4 @@
-package org.appa.planning.service;
+package org.appa.planning.util;
 
 import java.util.Collection;
 import java.util.Map;

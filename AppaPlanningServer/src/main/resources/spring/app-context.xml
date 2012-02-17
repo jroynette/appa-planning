@@ -16,6 +16,8 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+	<import resource="classpath*:spring/datasource.xml"/>
+
 	<!-- gestion des transactions par annotation sur les services -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
@@ -44,12 +46,6 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 
-	<!-- utilisateur courant associé à l'id du client flex et stocké en mémoire -->
-	<bean id="currentUserContext" class="org.appa.planning.util.UserContext"
-		scope="flex">
-		<aop:scoped-proxy />
-	</bean>
-
 	<!-- AOP -->
 
 	<bean id="AOPManager" class="org.appa.planning.util.AOPManager" />
@@ -70,18 +66,6 @@
 		</aop:aspect>
 	</aop:config>
 
-	<!-- custom scope -->
-
-	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-		<property name="scopes">
-			<map>
-				<entry key="flex">
-					<bean class="org.appa.planning.util.FlexClientScope" />
-				</entry>
-			</map>
-		</property>
-	</bean>
-	
 	<cache:annotation-driven/>
 	
 	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">

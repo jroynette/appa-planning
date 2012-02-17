@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 
 import org.appa.planning.bo.Absence;
 import org.appa.planning.bo.Projet;
+import org.appa.planning.bo.SaisieTemps;
 import org.appa.planning.bo.StatutAbsence;
 import org.appa.planning.bo.TypeAbsence;
 import org.appa.planning.bo.Utilisateur;
@@ -24,15 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Service
-@Profile("testdatas")
+@Profile("dev")
 public class DataTestGenerator {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Map<String,Utilisateur> utilisateurs = new HashMap<String, Utilisateur>();
+	private Map<String,Utilisateur> utilisateurs = new HashMap<String, Utilisateur>();
 
-	public Map<String,Projet> projets = new HashMap<String, Projet>();
+	private Map<String,Projet> projets = new HashMap<String, Projet>();
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -42,6 +43,7 @@ public class DataTestGenerator {
 		Projet projet = new Projet();
 		projet.setAnnee(annee);
 		projet.setNom(name);
+		projet.setDescription(name + " description");
 		entityManager.persist(projet);
 
 		projets.put(name, projet);
@@ -81,4 +83,37 @@ public class DataTestGenerator {
 
 		return absence;
 	}
+
+	@Transactional
+	public SaisieTemps createSaisieTemps(String user, String projet, String date, Integer nbHeures) throws ParseException{
+
+		SaisieTemps saisieTemps = new SaisieTemps();
+		saisieTemps.setProjet(projets.get(projet));
+		saisieTemps.setUtilisateur(utilisateurs.get(user));
+		saisieTemps.setHeures(nbHeures);
+		saisieTemps.setDate(sdf.parse(date));
+
+		entityManager.persist(saisieTemps);
+
+		return saisieTemps;
+	}
+
+
+	public Map<String, Utilisateur> getUtilisateurs() {
+		return utilisateurs;
+	}
+
+	public void setUtilisateurs(Map<String, Utilisateur> utilisateurs) {
+		this.utilisateurs = utilisateurs;
+	}
+
+	public Map<String, Projet> getProjets() {
+		return projets;
+	}
+
+	public void setProjets(Map<String, Projet> projets) {
+		this.projets = projets;
+	}
+
+
 }

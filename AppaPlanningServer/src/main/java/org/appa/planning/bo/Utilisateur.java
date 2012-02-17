@@ -32,9 +32,8 @@ public class Utilisateur implements Serializable {
 	@Size(max = 20)
 	private String login;
 
-	@NotNull
 	@Column
-	@Size(max = 20)
+	@Size(max = 10)
 	private String password;
 
 	@NotNull

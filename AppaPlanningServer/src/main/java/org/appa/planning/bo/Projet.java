@@ -32,7 +32,6 @@ public class Projet implements Serializable {
 	@Size(max = 30)
 	private String nom;
 
-	@NotNull
 	@Column
 	@Size(max = 100)
 	private String description;

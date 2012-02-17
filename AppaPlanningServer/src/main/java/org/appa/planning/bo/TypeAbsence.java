@@ -8,5 +8,5 @@ package org.appa.planning.bo;
  */
 public enum TypeAbsence {
 
-	RTT,CONGE
+	RTT,CONGE,AUTRE
 }

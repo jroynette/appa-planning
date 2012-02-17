@@ -4,6 +4,7 @@ import org.appa.planning.bo.Absence;
 import org.appa.planning.bo.StatutAbsence;
 import org.appa.planning.repository.AbsenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Service
+@RemotingDestination
 public class AbsenceService {
 
 	@Autowired

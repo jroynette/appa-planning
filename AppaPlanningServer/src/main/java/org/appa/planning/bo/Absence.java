@@ -36,7 +36,15 @@ public class Absence implements Serializable {
 
 	@NotNull
 	@Column
+	private Boolean debutAM;
+
+	@NotNull
+	@Column
 	private Date dateFin;
+
+	@NotNull
+	@Column
+	private Boolean finPM;
 
 	@NotNull
 	@Column
@@ -45,6 +53,25 @@ public class Absence implements Serializable {
 	@NotNull
 	@Column
 	private TypeAbsence type;
+
+	@Column
+	private String commentaire;
+
+	public Boolean getDebutAM() {
+		return debutAM;
+	}
+
+	public void setDebutAM(Boolean debutAM) {
+		this.debutAM = debutAM;
+	}
+
+	public Boolean getFinPM() {
+		return finPM;
+	}
+
+	public void setFinPM(Boolean finPM) {
+		this.finPM = finPM;
+	}
 
 	public Integer getId() {
 		return id;
@@ -92,6 +119,14 @@ public class Absence implements Serializable {
 
 	public void setType(TypeAbsence type) {
 		this.type = type;
+	}
+
+	public String getCommentaire() {
+		return commentaire;
+	}
+
+	public void setCommentaire(String commentaire) {
+		this.commentaire = commentaire;
 	}
 
 	@Override
