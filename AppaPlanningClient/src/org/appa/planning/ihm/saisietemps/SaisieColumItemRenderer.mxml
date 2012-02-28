@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXAdvancedDataGridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+								  xmlns:s="library://ns.adobe.com/flex/spark" 
+								  xmlns:mx="library://ns.adobe.com/flex/mx" 
+								  focusEnabled="true">
+	
+	<fx:Script>
+		<![CDATA[
+			import org.appa.planning.bo.SaisieTempsProjetJour;
+			import org.appa.planning.bo.SaisieTempsSemaine;
+		
+			override public function set data(value:Object):void
+			{
+				var jour:String = advancedDataGridListData.dataField;
+				var saisiesTemps:SaisieTempsSemaine = (advancedDataGridListData.owner.document as SaisieTemps).temps;
+				super.data = value.temps[jour] as SaisieTempsProjetJour;
+				
+				//jour ferie
+				if(saisiesTemps.joursFeries[jour] == true){
+					show("blocFerie");
+					hide("blocAbsence");
+					hide("blocAbsenceAM");
+					hide("lblData");
+					hide("blocAbsencePM");
+					return;
+				}
+				
+				//saisie temps
+				hide("blocFerie");
+				hide("blocAbsence");
+				hide("blocAbsenceAM");
+				show("lblData");
+				hide("blocAbsencePM");
+				
+				if(super.data.heures == 0){
+					lblData.text = "";
+				}else{
+					lblData.text = super.data.heures;
+				}
+				lblData.toolTip = super.data.commentaire;
+			}
+			
+			protected function lblData_clickHandler(event:MouseEvent):void
+			{
+				if(super.data != null){
+					/* super.data.heures = (super.data.heures + 1)%9;
+					lblData.text = super.data.heures;
+				
+					(advancedDataGridListData.owner.document as SaisieTemps).refreshTotal(advancedDataGridListData.dataField); */
+					
+					hide("lblData");
+					show("input");
+					input.text = lblData.text;
+					input.setFocus();
+					input.selectAll();
+					
+					input.addEventListener(KeyboardEvent.KEY_DOWN,checkEnter);
+				}
+			}
+			
+			protected function checkEnter(event:KeyboardEvent):void{
+				if(event.charCode == 13){
+					(advancedDataGridListData.owner.document as SaisieTemps).grid.setFocus();
+				}
+			}
+			
+			protected function show(idcomp:String):void
+			{
+				this[idcomp].visible= true;
+				this[idcomp].includeInLayout= true;
+			}
+			
+			protected function hide(idcomp:String):void
+			{
+				this[idcomp].visible= false;
+				this[idcomp].includeInLayout= false;
+			}
+			
+			protected function input_focusOutHandler(event:FocusEvent):void
+			{
+				super.data.heures = new Number(input.text);
+				if(super.data.heures == 0){
+					lblData.text = "";
+				}else{
+					lblData.text = super.data.heures;
+				}
+				
+				(advancedDataGridListData.owner.document as SaisieTemps).refreshTotal(advancedDataGridListData.dataField);
+				
+				hide("input");
+				show("lblData");
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%" click="lblData_clickHandler(event)" toolTip="{data.commentaire}" >
+		<s:Rect id="blocFerie" width="100%" height="100%" visible="false" includeInLayout="false">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:entries>
+						<s:GradientEntry color="0x965151" />
+						<s:GradientEntry color="0x965151" alpha="0.5"/>
+					</s:entries>	
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		<s:Rect id="blocAbsence" width="100%" height="100%" visible="false" includeInLayout="false">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:entries>
+						<s:GradientEntry color="0x6a90a4" />
+						<s:GradientEntry color="0x6a90a4" alpha="0.5"/>
+					</s:entries>	
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>		
+		<s:Rect id="blocAbsenceAM" width="50%" height="100%" visible="false" includeInLayout="false">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:entries>
+						<s:GradientEntry color="0x6a90a4" />
+						<s:GradientEntry color="0x6a90a4" alpha="0.5"/>
+					</s:entries>	
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		<s:Label id="lblData" />
+		<s:TextInput id="input" visible="false" includeInLayout="false" width="100%" height="100%" 
+					 focusOut="input_focusOutHandler(event)" restrict="0-9"/>
+		<s:Rect id="blocAbsencePM" width="50%" height="100%" visible="false" includeInLayout="false">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:entries>
+						<s:GradientEntry color="0x6a90a4" />
+						<s:GradientEntry color="0x6a90a4" alpha="0.5"/>
+					</s:entries>	
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+</s:HGroup>
+	
+	<s:Image source="@Embed(source='/assets/comment.jpg')" 
+			 width="15" height="15"
+			 visible="{data.commentaire != null &amp;&amp; data.commentaire != '' &amp;&amp; !input.visible}" 
+			 x="85" />
+	
+</s:MXAdvancedDataGridItemRenderer>

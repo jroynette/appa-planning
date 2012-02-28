@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   title="Commentaire - {projet.nom} - {saisie.jour}" 
+			   close="PopUpManager.removePopUp(this)">
+	<fx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			import org.appa.planning.bo.Projet;
+			import org.appa.planning.bo.SaisieTempsProjet;
+			import org.appa.planning.bo.SaisieTempsProjetJour;
+			
+			[Bindable]
+			public var saisie:SaisieTempsProjetJour;
+			
+			[Bindable]
+			public var projet:Projet;
+		]]>
+	</fx:Script>
+	
+	<s:VGroup>
+		<s:TextArea width="300" height="150" text="@{saisie.commentaire}" borderVisible="false"/>
+	</s:VGroup>
+	
+	
+</s:TitleWindow>

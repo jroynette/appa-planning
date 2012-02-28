@@ -1,0 +1,30 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace spark "mx.skins.spark.*";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+s|Panel{
+	cornerRadius:10;
+}
+	
+s|Button{
+	fontWeight:bold;
+	/*chromeColor : #072f49;*/
+	/*color:white;*/
+}
+
+global
+{
+	/*fontFamily: verdana;*/
+	/*color: #FFFFFF;*/
+	/*contentBackgroundColor: #39628C;*/
+	/*symbolColor: #000000;
+	rollOverColor: #355D89;
+	selectionColor: #294867;
+	focusColor: #333300;
+	accentColor: #6589AD;*/
+	fontSize:12;
+	cornerRadius:10;
+}
+
+

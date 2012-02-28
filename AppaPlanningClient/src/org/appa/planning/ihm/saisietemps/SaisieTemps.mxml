@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					xmlns:saisietemps="org.appa.planning.ihm.saisietemps.*"
+					contentCreationComplete="init(event)">
+	
+	<fx:Declarations>	
+	
+		<mx:RemoteObject id="saisieTempsRO" destination="SaisieTempsService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="loadSaisieTemps" result="loadSaisieTempsHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+			<mx:method name="saveSaisieTemps" result="saveSaisieTempsHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import org.appa.planning.bo.SaisieTempsProjet;
+			import org.appa.planning.bo.SaisieTempsProjetJour;
+			import org.appa.planning.bo.SaisieTempsSemaine;
+			import org.appa.planning.util.ChannelsUtils;
+			import org.appa.planning.util.UserContext;
+			
+			import spark.events.TextOperationEvent;
+			
+			[Bindable]
+			public var temps:SaisieTempsSemaine;
+			
+			[Bindable]
+			public var currentSaisie:SaisieTempsProjetJour;
+			
+			[Bindable]
+			public var currentSaisieProjet:SaisieTempsProjet;
+			
+			public function init(event:Event):void
+			{
+				if(date == null){
+					return;
+				}
+				
+				var now:Date = new Date();
+				while(now.day != 1){
+					now.date -= 1;
+				}
+				
+				date.text = DateField.dateToString(now,'DD/MM/YYYY');
+				loadSaisieTemps();
+			}
+			
+			protected function loadSaisieTemps():void{
+				saisieTempsRO.getOperation("loadSaisieTemps").send(
+					UserContext.instance.user.login,
+					DateField.stringToDate(date.text,'DD/MM/YYYY'));	
+				
+				commentBtn.enabled = false;
+				commentBtn.label = "Ajouter commentaire";
+			}
+			
+			protected function loadSaisieTempsHandler(event:ResultEvent):void
+			{
+				temps = event.result as SaisieTempsSemaine;
+				
+				refreshTotal('lundi');
+				refreshTotal('mardi');
+				refreshTotal('mercredi');
+				refreshTotal('jeudi');
+				refreshTotal('vendredi');
+				refreshTotal('samedi');	
+			}
+			
+			public function refreshTotal(jour:String):void
+			{
+				this["total" + jour].text = temps.total(jour);
+				
+				this.total.text = (new Number(this.totallundi.text) + new Number(this.totalmardi.text) + new Number(this.totalmercredi.text)
+					+ new Number(this.totaljeudi.text) + new Number(this.totalvendredi.text) + new Number(this.totalsamedi.text)).toString();
+			}
+			
+			
+			
+			protected function selectCell(event:ListEvent):void
+			{
+				this.currentSaisie = getCurrentSaisie(event.rowIndex,event.columnIndex);
+				if(currentSaisie.heures > 0){
+					commentBtn.enabled = true;
+					if(currentSaisie.commentaire != null && currentSaisie.commentaire != ''){
+						commentBtn.label = "Modifier commentaire"
+					}else{
+						commentBtn.label = "Ajouter commentaire"
+					}
+				}else{
+					commentBtn.enabled = false;
+					commentBtn.label = "Ajouter commentaire"
+				}
+				
+			}
+			
+			protected function getCurrentSaisie(row:int, col:int):SaisieTempsProjetJour
+			{
+				var ligne:SaisieTempsProjet = this.temps.projets.getItemAt(row) as SaisieTempsProjet;
+				this.currentSaisieProjet = ligne;
+				var dataField:String = grid.columns[col].dataField;
+				return ligne.temps[dataField];
+			}
+			
+			
+			protected function comment(event:MouseEvent):void
+			{	
+				var popup:CommentPopup = new CommentPopup();
+				popup.saisie = currentSaisie;
+				popup.projet = currentSaisieProjet.projet;
+				
+				PopUpManager.addPopUp(popup,this);
+				PopUpManager.centerPopUp(popup);
+			}
+			
+			protected function valider(event:MouseEvent):void
+			{
+				saisieTempsRO.getOperation("saveSaisieTemps").send(
+					UserContext.instance.user.login,temps);
+			}
+			
+			protected function saveSaisieTempsHandler(event:ResultEvent):void
+			{
+				Alert.show("Sauvegarde effectuée");
+			}
+			
+			protected function filtreProjet_changeHandler(event:TextOperationEvent):void
+			{
+				if(filtreProjet.text.length >= 3){
+					temps.projets.filterFunction = filterProjet;
+					temps.projets.refresh();
+				}
+				if(filtreProjet.text.length == 0){
+					temps.projets.filterFunction = null;
+					temps.projets.refresh();
+				}
+				
+			}
+			
+			protected function filterProjet(item:Object):Boolean{
+				var nom:String = item.projet.nom as String; 
+				return nom.toLocaleLowerCase().match(filtreProjet.text.toLowerCase()) != null;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:HGroup width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+		
+		<s:Panel width="95%" height="95%" title="Saisie des temps par projet" >
+			<s:VGroup width="100%" height="100%" paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10" horizontalAlign="center">
+				
+				<s:Group width="100%" height="25">
+					<s:TextInput toolTip="filtre sur les noms de projets" id="filtreProjet" change="filtreProjet_changeHandler(event)"/>
+					<s:HGroup x="200" verticalAlign="middle">
+						<s:Label text="Semaine du "/>
+						<mx:DateField id="date" disabledDays="[0,2,3,4,5,6]" 
+									  firstDayOfWeek="1" formatString="DD/MM/YYYY" 
+									  dayNames="['D','L','M','M','J','V','S']"
+									  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+									  selectableRange="{{rangeEnd: new Date()}}"
+									  change="loadSaisieTemps()"
+									  
+									  />	
+					</s:HGroup>
+					<s:Button x="500" id="commentBtn" label="Ajouter commentaire" click="comment(event)" enabled="false"/>
+					<s:Button x="830" label="Valider" click="valider(event)"/>
+				</s:Group>
+
+				<mx:AdvancedDataGrid id="grid" width="100%" height="100%" dataProvider="{temps.projets}" selectionMode="singleCell"  selectionColor="0xffffff"
+									 sortableColumns="false" resizableColumns="false" rowHeight="25" alternatingItemColors="[white,0x7AC5CD]"
+									 change="selectCell(event)">
+					<mx:columns>
+							<mx:AdvancedDataGridColumn width="300" headerText="Projet" 
+													   itemRenderer="org.appa.planning.ihm.saisietemps.ProjetColumItemRenderer"
+													   
+													   />
+							<mx:AdvancedDataGridColumn headerText="Lundi"  dataField="lundi"  itemRenderer="org.appa.planning.ihm.saisietemps.SaisieColumItemRenderer" />
+							<mx:AdvancedDataGridColumn headerText="Mardi"  dataField="mardi"  itemRenderer="org.appa.planning.ihm.saisietemps.SaisieColumItemRenderer" />
+							<mx:AdvancedDataGridColumn headerText="Mercredi"  dataField="mercredi"  itemRenderer="org.appa.planning.ihm.saisietemps.SaisieColumItemRenderer" />
+							<mx:AdvancedDataGridColumn headerText="Jeudi"  dataField="jeudi"  itemRenderer="org.appa.planning.ihm.saisietemps.SaisieColumItemRenderer" />
+							<mx:AdvancedDataGridColumn headerText="Vendredi"  dataField="vendredi"  itemRenderer="org.appa.planning.ihm.saisietemps.SaisieColumItemRenderer" />
+							<mx:AdvancedDataGridColumn headerText="Samedi"  dataField="samedi"  itemRenderer="org.appa.planning.ihm.saisietemps.SaisieColumItemRenderer" />
+					</mx:columns>
+				</mx:AdvancedDataGrid>
+				
+				<s:Group>
+					<s:Label x="115" y="5" text="Totaux" fontWeight="bold"/>
+					<s:Label id="total" x="215" y="5" width="30" fontWeight="bold"/>
+					<s:HGroup gap="81" x="315">
+						<saisietemps:TotalLabel id="totallundi" width="20"  fontWeight="bold"/>
+						<saisietemps:TotalLabel id="totalmardi" width="20"  fontWeight="bold"/>
+						<saisietemps:TotalLabel id="totalmercredi" width="20"  fontWeight="bold"/>
+						<saisietemps:TotalLabel id="totaljeudi" width="20"  fontWeight="bold"/>
+						<saisietemps:TotalLabel id="totalvendredi" width="20"  fontWeight="bold"/>
+						<saisietemps:TotalLabel id="totalsamedi" width="20"  fontWeight="bold"/>
+					</s:HGroup>	
+				</s:Group>
+				
+				<!--<s:Line height="1" xFrom="300" xTo="800">
+					<s:stroke>
+						<s:SolidColorStroke color="0x000000" />
+					</s:stroke>
+				</s:Line>-->
+	
+				<s:Group>
+					<s:Label x="55" y="5" text="Déjeuner externe" fontWeight="bold"/>
+					<s:HGroup gap="83" x="310">
+						<s:CheckBox selected="@{temps.dejeunersExterne.lundi}"/>
+						<s:CheckBox selected="@{temps.dejeunersExterne.mardi}"/>
+						<s:CheckBox selected="@{temps.dejeunersExterne.mercredi}"/>
+						<s:CheckBox selected="@{temps.dejeunersExterne.jeudi}"/>
+						<s:CheckBox selected="@{temps.dejeunersExterne.vendredi}"/>
+						<s:CheckBox selected="@{temps.dejeunersExterne.samedi}"/>
+					</s:HGroup>	
+				</s:Group>
+				
+			</s:VGroup>
+		</s:Panel>
+		
+	</s:HGroup>
+	
+</s:NavigatorContent>
