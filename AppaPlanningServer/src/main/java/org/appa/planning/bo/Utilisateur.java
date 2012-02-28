@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
 
 /**
  * Objet métier représentant un utilisateur
@@ -29,7 +32,7 @@ public class Utilisateur implements Serializable {
 
 	@NotNull
 	@Column(unique = true)
-	@Size(max = 20)
+	@Size(max = 30)
 	private String login;
 
 	@Column
@@ -48,7 +51,7 @@ public class Utilisateur implements Serializable {
 
 	@NotNull
 	@Column
-	@Size(max = 10)
+	@Size(max = 15)
 	private String role;
 
 	@NotNull
@@ -62,12 +65,21 @@ public class Utilisateur implements Serializable {
 	private Integer nbRTT;
 
 	@NotNull
+	@Email
+	@Size(max = 80)
+	private String email;
+
+	@NotNull
 	@Column
 	private Boolean quatrevingt = false;
 
 	@NotNull
 	@Column
 	private Boolean actif = true;
+
+	@ManyToOne
+	private Site site;
+
 
 	public Integer getId() {
 		return id;
@@ -151,6 +163,22 @@ public class Utilisateur implements Serializable {
 
 	public String getDisplayName() {
 		return prenom + " " + nom;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Site getSite() {
+		return site;
+	}
+
+	public void setSite(Site site) {
+		this.site = site;
 	}
 
 	@Override

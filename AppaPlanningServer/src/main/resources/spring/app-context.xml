@@ -18,6 +18,8 @@
 
 	<import resource="classpath*:spring/datasource.xml"/>
 
+	<context:property-placeholder/>
+
 	<!-- gestion des transactions par annotation sur les services -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
 

@@ -14,7 +14,8 @@ import org.appa.planning.bo.SaisieTemps;
 import org.appa.planning.bo.StatutAbsence;
 import org.appa.planning.bo.TypeAbsence;
 import org.appa.planning.bo.Utilisateur;
-import org.springframework.context.annotation.Profile;
+import org.appa.planning.repository.UtilisateurRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Service
-@Profile("dev")
 public class DataTestGenerator {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	@Autowired
+	private UtilisateurRepository utilisateurRepository;
 
 	private Map<String,Utilisateur> utilisateurs = new HashMap<String, Utilisateur>();
 
@@ -43,7 +46,7 @@ public class DataTestGenerator {
 		Projet projet = new Projet();
 		projet.setAnnee(annee);
 		projet.setNom(name);
-		projet.setDescription(name + " description");
+		projet.setDescription(name + "desc");
 		entityManager.persist(projet);
 
 		projets.put(name, projet);
@@ -55,11 +58,21 @@ public class DataTestGenerator {
 	@Transactional
 	public Utilisateur createUtilisateur(String login){
 
+		return createUtilisateur(login, "utilisateur");
+	}
+
+	@Transactional
+	public Utilisateur createUtilisateur(String login, String role){
+
+		Utilisateur existUser = utilisateurRepository.findByLogin(login);
+		if(existUser != null){
+			return existUser;
+		}
 		Utilisateur utilisateur = new Utilisateur();
 		utilisateur.setLogin(login);
 		utilisateur.setNom(login + "nom");
 		utilisateur.setPrenom(login + "prenom");
-		utilisateur.setRole("role1");
+		utilisateur.setRole(role);
 		utilisateur.setNbConges(25);
 		utilisateur.setNbRTT(15);
 		entityManager.persist(utilisateur);
@@ -68,6 +81,7 @@ public class DataTestGenerator {
 
 		return utilisateur;
 	}
+
 
 	@Transactional
 	public Absence createAbsence(TypeAbsence type, StatutAbsence statut, String dateDeb,  String dateFin, String user) throws ParseException{
