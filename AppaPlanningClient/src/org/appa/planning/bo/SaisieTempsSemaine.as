@@ -17,6 +17,9 @@ package org.appa.planning.bo
 		//map<String,boolean>
 		public var joursFeries:Object = new Object();
 		
+		//map<String,Absence>
+		public var absences:Object = new Object();
+		
 		public function total(jour:String):int{
 			var result:int = 0;
 			for each (var projet:SaisieTempsProjet in projets) 

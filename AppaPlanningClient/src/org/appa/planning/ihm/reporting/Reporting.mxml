@@ -25,6 +25,8 @@
 	<fx:Script>
 		<![CDATA[
 			import mx.charts.ChartItem;
+			import mx.charts.events.ChartEvent;
+			import mx.charts.events.ChartItemEvent;
 			import mx.collections.ArrayCollection;
 			import mx.collections.Sort;
 			import mx.controls.Alert;
@@ -141,8 +143,10 @@
 					result2.addItem(data);
 					
 					var total:Number = 0;
-					for each (var user:String in users){
-						total =  total + (data[user]);
+					for each (var user2:String in users){
+						if(data[user2] != null){
+							total =  total + new Number(data[user2]);
+						}
 					}
 					data.total = total;	
 				}
@@ -168,10 +172,10 @@
 				//creation du graphique dynamique
 				var series:Array = new Array();
 				i = 0;
-				for each (var user:String in users){
+				for each (var user3:String in users){
 					var serie:BarSeries = new BarSeries();
-					serie.xField = user;
-					serie.displayName = user;
+					serie.xField = user3;
+					serie.displayName = user3;
 					serie.setStyle("showDataEffect",seriesInterpolate);
 					serie.setStyle("fill",colorsArray[i++]);
 					//serie.fillFunction = fillChartColor;
@@ -274,9 +278,9 @@
 					exportCsv += projet + ";";
 					
 					//une colonne par utilisateur
-					for each (var user:Utilisateur in this.listePersonnes) 
+					for each (var user2:Utilisateur in this.listePersonnes) 
 					{
-						var temps:String = ligne[user.prenom + " " + user.nom ];
+						var temps:String = ligne[user2.prenom + " " + user2.nom ];
 						if(temps == null){
 							exportCsv += "0;";
 						}else{
@@ -291,6 +295,31 @@
 				exportPopup.text = exportCsv;
 				PopUpManager.addPopUp(exportPopup,this);
 				PopUpManager.centerPopUp(exportPopup);
+			}
+			
+			protected function barchart2_changeHandler(event:ChartItemEvent):void
+			{
+				var detailsPopup:DetailSaisiesPopup = new DetailSaisiesPopup();
+				detailsPopup.dateDeb = DateField.stringToDate(dateDeb2.text,'DD/MM/YYYY');
+				detailsPopup.dateFin = DateField.stringToDate(dateFin2.text,'DD/MM/YYYY');
+				detailsPopup.projet = event.hitData.chartItem.item.projet;
+				if(personDropDown.enabled){
+					detailsPopup.user = personDropDown.selectedItem;
+				}else{
+					detailsPopup.user = UserContext.instance.user;
+				}
+				PopUpManager.addPopUp(detailsPopup,FlexGlobals.topLevelApplication as DisplayObject);
+				PopUpManager.centerPopUp(detailsPopup);
+			}
+			
+			protected function barchart1_itemClickHandler(event:ChartItemEvent):void
+			{
+				var detailsPopup:DetailSaisiesPopup = new DetailSaisiesPopup();
+				detailsPopup.dateDeb = DateField.stringToDate(dateDeb.text,'DD/MM/YYYY');
+				detailsPopup.dateFin = DateField.stringToDate(dateFin.text,'DD/MM/YYYY');
+				detailsPopup.projet = event.hitData.chartItem.item.projet; 
+				PopUpManager.addPopUp(detailsPopup,FlexGlobals.topLevelApplication as DisplayObject);
+				PopUpManager.centerPopUp(detailsPopup);
 			}
 			
 		]]>
@@ -312,30 +341,44 @@
 					<s:DropDownList id="personDropDown" change="refreshUserByDates()" labelFunction="personLabelFunction" width="185"
 									enabled="{UserContext.instance.user.role == 'responsable'}" dataProvider="{this.listePersonnes}" >
 					</s:DropDownList>
-					<mx:DateField id="dateDeb2" formatString="DD/MM/YYYY" change="refreshUserByDates()"/>
-					<mx:DateField id="dateFin2" formatString="DD/MM/YYYY" change="refreshUserByDates()"/>
+					<mx:DateField id="dateDeb2"
+								  formatString="DD/MM/YYYY" 
+								  firstDayOfWeek="1"
+								  dayNames="['D','L','M','M','J','V','S']"
+								  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+								  change="refreshUserByDates()"/>
+					<mx:DateField id="dateFin2" 
+								  firstDayOfWeek="1" 
+								  formatString="DD/MM/YYYY" 
+								  dayNames="['D','L','M','M','J','V','S']"
+								  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+								   change="refreshUserByDates()"/>
 					<s:Label text="Tri par charge projet"  toolTip="trier par charge projet"/>
 					<s:CheckBox id="triTempsParPersonne" toolTip="trier par charge projet" selected="true" change="refreshUserByDates()"/>
 				</s:HGroup>
 				
-				<mx:BarChart id="barchart2" width="100%" height="{20+(tempsParPersonne.length * 30)}" dataProvider="{tempsParPersonne}" showDataTips="true" >
-					<mx:series>
-						<mx:BarSeries xField="temps" displayName="Charge projet en jours" showDataEffect="{seriesInterpolate}">
-							<mx:fill>
-								<mx:SolidColor color="haloBlue" alpha="0.6"/>
-							</mx:fill>
-						</mx:BarSeries>
-					</mx:series>
-					<mx:verticalAxis >
-						<mx:CategoryAxis categoryField="projet"/>
-					</mx:verticalAxis>
-					<mx:horizontalAxis>
-						<mx:LinearAxis id="haxis2"/>
-					</mx:horizontalAxis>
-					<mx:horizontalAxisRenderers>
-						<mx:AxisRenderer axis="{haxis2}" visible="false"/>
-					</mx:horizontalAxisRenderers>
-				</mx:BarChart>
+				<s:Scroller width="100%" height="100%">
+					<s:Group>
+						<mx:BarChart id="barchart2" width="100%" height="{20+(tempsParPersonne.length * 30)}" dataProvider="{tempsParPersonne}" showDataTips="true" itemClick="barchart2_changeHandler(event)">
+							<mx:series>
+								<mx:BarSeries xField="temps" displayName="Charge projet en jours" showDataEffect="{seriesInterpolate}">
+									<mx:fill>
+										<mx:SolidColor color="haloBlue" alpha="0.6"/>
+									</mx:fill>
+								</mx:BarSeries>
+							</mx:series>
+							<mx:verticalAxis >
+								<mx:CategoryAxis categoryField="projet"/>
+							</mx:verticalAxis>
+							<mx:horizontalAxis>
+								<mx:LinearAxis id="haxis2"/>
+							</mx:horizontalAxis>
+							<mx:horizontalAxisRenderers>
+								<mx:AxisRenderer axis="{haxis2}" visible="false"/>
+							</mx:horizontalAxisRenderers>
+						</mx:BarChart>	
+					</s:Group>
+				</s:Scroller>
 			</s:VGroup>
 		</s:NavigatorContent>
 		
@@ -343,32 +386,45 @@
 			<s:VGroup width="100%" height="100%" paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10">
 				
 				<s:HGroup width="100%" height="30" verticalAlign="middle" horizontalAlign="center" gap="10">
-					<mx:DateField id="dateDeb" formatString="DD/MM/YYYY" change="refreshProjectsByDates()" />
-					<mx:DateField id="dateFin" formatString="DD/MM/YYYY" change="refreshProjectsByDates()" />
+					<mx:DateField id="dateDeb"
+								  firstDayOfWeek="1" 
+								  formatString="DD/MM/YYYY" 
+								  dayNames="['D','L','M','M','J','V','S']"
+								  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+								  change="refreshProjectsByDates()" />
+					<mx:DateField id="dateFin"
+								  firstDayOfWeek="1" 
+								  formatString="DD/MM/YYYY" 
+								  dayNames="['D','L','M','M','J','V','S']"
+								  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+								  change="refreshProjectsByDates()" />
 					<s:Label text="Tri par charge projet"  toolTip="trier par charge projet"/>
 					<s:CheckBox id="triParTempsProjet" toolTip="trier par charge projet" selected="true" change="refreshProjectsByDates()"/>
 					<s:Button label="Exporter" click="export(event)" toolTip="exporter au format CSV"/>
 				</s:HGroup>
 				
-				<mx:BarChart id="barchart1" width="100%" height="{20+(tempsParProjet.length * 30)}" dataProvider="{tempsParProjet}" showDataTips="true">
-					<mx:series>
-						<mx:BarSet type="stacked" displayName="Charge projet" id="projetsBarSet">
-							<mx:BarSeries xField="charge1" />
-							<mx:BarSeries xField="charge2" />
-							<mx:BarSeries xField="charge3" />
-						</mx:BarSet>
-					</mx:series>
-					<mx:verticalAxis >
-						<mx:CategoryAxis categoryField="projet"/>
-					</mx:verticalAxis>
-					<mx:horizontalAxis>
-						<mx:LinearAxis id="haxis"/>
-					</mx:horizontalAxis>
-					<mx:horizontalAxisRenderers>
-						<mx:AxisRenderer axis="{haxis}" visible="false"/>
-					</mx:horizontalAxisRenderers>
-				</mx:BarChart>
-				
+				<s:Scroller width="100%" height="100%">
+					<s:Group>
+						<mx:BarChart id="barchart1" width="100%" height="{20+(tempsParProjet.length * 30)}" dataProvider="{tempsParProjet}" showDataTips="true" itemClick="barchart1_itemClickHandler(event)">
+							<mx:series>
+								<mx:BarSet type="stacked" displayName="Charge projet" id="projetsBarSet">
+									<mx:BarSeries xField="charge1" />
+									<mx:BarSeries xField="charge2" />
+									<mx:BarSeries xField="charge3" />
+								</mx:BarSet>
+							</mx:series>
+							<mx:verticalAxis >
+								<mx:CategoryAxis categoryField="projet"/>
+							</mx:verticalAxis>
+							<mx:horizontalAxis>
+								<mx:LinearAxis id="haxis"/>
+							</mx:horizontalAxis>
+							<mx:horizontalAxisRenderers>
+								<mx:AxisRenderer axis="{haxis}" visible="false"/>
+							</mx:horizontalAxisRenderers>
+						</mx:BarChart>
+					</s:Group>
+				</s:Scroller>
 			</s:VGroup>	
 		</s:NavigatorContent>
 		

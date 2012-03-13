@@ -12,6 +12,7 @@
         <field:display field="quatrevingt" id="s_org_appa_planning_bo_Utilisateur_quatrevingt" object="${utilisateur}" z="KttItCB0/aOe7nELPBPGHLMwS9k="/>
         <field:display field="actif" id="s_org_appa_planning_bo_Utilisateur_actif" object="${utilisateur}" z="fOcTy4RPpzE0kVBrU4nQjzDslts="/>
         <field:display field="role" id="s_org_appa_planning_bo_Utilisateur_role" object="${utilisateur}" z="Bi2kFV4LxCB8n/NMP3qEDWptMqE="/>
-        <field:display field="site" id="s_org_appa_planning_bo_Utilisateur_site" object="${utilisateur}" z="3nKiUp0ZiT4UBjYvsLr3nho8m8M="/>
+        <field:display field="deltaJoursConges" id="s_org_appa_planning_bo_Utilisateur_deltaJoursConges" object="${utilisateur}" />
+        <field:display field="deltaJoursRTT" id="s_org_appa_planning_bo_Utilisateur_deltaJoursRTT" object="${utilisateur}"/>
     </page:show>
 </div>

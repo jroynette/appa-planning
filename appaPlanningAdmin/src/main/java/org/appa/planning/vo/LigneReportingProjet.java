@@ -3,7 +3,7 @@ package org.appa.planning.vo;
 import java.io.Serializable;
 
 /**
- * Objet métier représentant une ligne pour un reporting projet
+ * Objet mï¿½tier reprï¿½sentant une ligne pour un reporting projet
  * 
  * @author jroynett
  *

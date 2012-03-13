@@ -82,13 +82,4 @@ privileged aspect Utilisateur_Roo_JavaBean {
     public void Utilisateur.setActif(Boolean actif) {
         this.actif = actif;
     }
-    
-    public Site Utilisateur.getSite() {
-        return this.site;
-    }
-    
-    public void Utilisateur.setSite(Site site) {
-        this.site = site;
-    }
-    
 }

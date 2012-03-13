@@ -11,5 +11,7 @@ package org.appa.planning.bo
 		public var description:String;
 		
 		public var annee:int;
+		
+		public var visible:Boolean = true;
 	}
 }

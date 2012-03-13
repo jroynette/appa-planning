@@ -15,6 +15,15 @@
 		overflowToDisk="false"
 		diskPersistent="false"
 		/>
+		
+	<cache
+		name="jourFeries"
+		timeToIdleSeconds="3600"
+		timeToLiveSeconds="86400"
+		eternal="false"
+		overflowToDisk="false"
+		diskPersistent="false"
+		/>
 
 <!-- 	<cache name="org.hibernate.cache.StandardQueryCache" -->
 <!-- 		maxElementsInMemory="5" eternal="false" timeToLiveSeconds="120" -->

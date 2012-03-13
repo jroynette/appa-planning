@@ -9,11 +9,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.appa.planning.bo.Absence;
 import org.appa.planning.bo.DejeunerExterne;
 import org.appa.planning.bo.JourSemaine;
 import org.appa.planning.bo.Projet;
 import org.appa.planning.bo.SaisieTemps;
+import org.appa.planning.bo.StatutAbsence;
 import org.appa.planning.bo.Utilisateur;
+import org.appa.planning.repository.AbsenceRepository;
 import org.appa.planning.repository.DejeunerExterneRepository;
 import org.appa.planning.repository.ProjectRepository;
 import org.appa.planning.repository.SaisieTempsRepository;
@@ -47,6 +50,13 @@ public class SaisieTempsService {
 	@Autowired
 	private DejeunerExterneRepository dejeunerExterneRepository;
 
+	@Autowired
+	private AbsenceRepository  absenceRepository;
+
+	@Autowired
+	private GoogleCalendarService  calendarService;
+
+
 	/**
 	 * sauvegarde du planning hebo
 	 * @param login le login de l'utilisateur
@@ -75,12 +85,12 @@ public class SaisieTempsService {
 					saisieTemps.setHeures(saisieProjetJour.getHeures());
 					saisieTemps.setCommentaire(saisieProjetJour.getCommentaire());
 					saisieTemps.setDate(DateUtils.addDays(dateDebutSemaine, saisieProjetJour.getJour().ordinal()));
-					
+
 					saisieTempsRepository.save(saisieTemps);
 				}
 			}
 		}
-	
+
 		//suppression des dej externes du lundi au dimanche sur la semaine
 		List<DejeunerExterne> dejeunerExternes = dejeunerExterneRepository.findByUtilisateur(user.getId(), dateDebutSemaine, dateFinSemaine);
 		dejeunerExterneRepository.deleteInBatch(dejeunerExternes);
@@ -107,28 +117,29 @@ public class SaisieTempsService {
 	 * @param login le login de l'utilisateur
 	 * @param date une date sur la semaine
 	 * @return le planning des temps hebdo
+	 * @throws AbsenceException
 	 */
-	public SaisieTempsSemaine loadSaisieTemps(String login, Date date){
+	public SaisieTempsSemaine loadSaisieTemps(String login, Date date) throws Exception{
 
 		SaisieTempsSemaine planningHebdo = new SaisieTempsSemaine();
 		Map<String,SaisieTempsProjet> projetsSaisis = new TreeMap<String,SaisieTempsProjet>();
 
-		//r�cup�ration du 1er lundi avant la date s�lectionn�e
+		//recup du 1er lundi avant la date selectionnee
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
-//		while(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
-//			calendar.add(Calendar.DATE, -1);
-//		}
+		//		while(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY){
+		//			calendar.add(Calendar.DATE, -1);
+		//		}
 
-		//plage de dates entre d�but et fin de semaine de saisie (samedi)
+		//plage de dates entre debut et fin de semaine de saisie (samedi)
 		Date dateDebutSemaine = calendar.getTime();
 		Date dateFinSemaine = DateUtils.addDays(dateDebutSemaine, 6);
 		planningHebdo.setDate(dateDebutSemaine);
 
-		//r�cup�ration de l'utilisateur
+		//recup de l'utilisateur
 		Utilisateur user = utilisateurRepository.findByLogin(login);
 
-		//r�cup�ration des temps saisis du lundi au samedi sur la semaine
+		//recup des temps saisis du lundi au samedi sur la semaine
 		List<SaisieTemps> saisies = saisieTempsRepository.findByUtilisateur(user.getId(), dateDebutSemaine, dateFinSemaine);
 
 		//recuperation de la liste des projets de l'annee selectionn�e
@@ -138,10 +149,54 @@ public class SaisieTempsService {
 			projetsSaisis.put(projet.getNom(), new SaisieTempsProjet(projet));
 		}
 
-		//TODO recup des jours f�ries
-		//planningHebdo.getJoursFeries().put(JourSemaine.samedi,new Boolean(true));
+		//recup des jours feries
+		List<Date> joursFeries = null;
+		try {
+			joursFeries = calendarService.getJourFeries();
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
 
-		//TODO recup des jours de cong�s
+		GregorianCalendar calendarTmp = new GregorianCalendar();
+		calendarTmp.setTime(dateDebutSemaine);
+		while(!DateUtils.isSameDay(calendarTmp.getTime(),dateFinSemaine)){
+			Date dateTmp = calendarTmp.getTime();
+			if(joursFeries.contains(dateTmp)){
+				planningHebdo.getJoursFeries().put(JourSemaine.values()[calendarTmp.get(Calendar.DAY_OF_WEEK)-1],new Boolean(true));
+			}
+			calendarTmp.add(Calendar.DATE, 1);
+		}
+
+		//recup des jours de conges
+		List<Absence> absences = absenceRepository.findByUtilisateur(user.getId(), dateDebutSemaine, dateFinSemaine);
+		for (Absence absence : absences) {
+			if(absence.getStatut().equals(StatutAbsence.VALIDE)){
+
+				GregorianCalendar calendarAbsence = new GregorianCalendar();
+				calendarAbsence.setTime(absence.getDateDebut());
+				Date dateFinPlusUn = DateUtils.addDays(absence.getDateFin(), 1);
+				while(!DateUtils.isSameDay(calendarAbsence.getTime(), dateFinPlusUn)){
+					JourSemaine jourAbsence = JourSemaine.values()[calendarAbsence.get(Calendar.DAY_OF_WEEK)-1];
+
+					Absence existingAbsence = planningHebdo.getAbsences().get(jourAbsence);
+					if(existingAbsence != null){
+						//si une absence existe deja sur la meme journee, alors on merge les 2 demi journees d'absences en une absence d'1 journee
+						existingAbsence.setDebutPM(false);
+						existingAbsence.setFinAM(false);
+					}else{
+						Absence absenceTmp = absence.cloneAbsence();
+						if(absenceTmp.getDebutPM() && !DateUtils.isSameDay(calendarAbsence.getTime(), absenceTmp.getDateDebut())){
+							absenceTmp.setDebutPM(false);
+						}
+						if(absenceTmp.getFinAM() && !DateUtils.isSameDay(calendarAbsence.getTime(), absenceTmp.getDateFin())){
+							absenceTmp.setFinAM(false);
+						}
+						planningHebdo.getAbsences().put(jourAbsence, absenceTmp);
+					}
+					calendarAbsence.add(Calendar.DATE, 1);
+				}
+			}
+		}
 
 		//traitement des saisies
 		for (SaisieTemps saisie : saisies) {
@@ -174,6 +229,15 @@ public class SaisieTempsService {
 		planningHebdo.setProjets(projetsSaisis.values());
 
 		return planningHebdo;
-		
+
 	}
+
+	public List<SaisieTemps> findByProjetAndUtilisateur(String nomProjet, Long userId, Date dateDebut, Date dateFin ){
+		if(userId != null){
+			return saisieTempsRepository.findByProjetAndUtilisateur(nomProjet, userId, dateDebut, dateFin);
+		}else{
+			return saisieTempsRepository.findByProjet(nomProjet, dateDebut, dateFin);
+		}
+	}
+
 }

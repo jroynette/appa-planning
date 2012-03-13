@@ -22,4 +22,16 @@ public interface SaisieTempsRepository extends JpaRepository<SaisieTemps, Long> 
 	 */
 	@Query("from SaisieTemps s where s.utilisateur.id = ?1 and s.date >= ?2 and s.date <= ?3")
 	List<SaisieTemps> findByUtilisateur(Long userId, Date dateDebut, Date dateFin );
+
+	/**
+	 * @return la liste des saisies d'un projet entre les 2 dates
+	 */
+	@Query("from SaisieTemps s where s.projet.nom = ?1 and s.date >= ?2 and s.date <= ?3 order by s.date")
+	List<SaisieTemps> findByProjet(String nomProjet, Date dateDebut, Date dateFin );
+
+	/**
+	 * @return la liste des saisies d'un projet et d'un utilisateur entre les 2 dates
+	 */
+	@Query("from SaisieTemps s where s.projet.nom = ?1 and s.utilisateur.id = ?2 and s.date >= ?3 and s.date <= ?4 order by s.date")
+	List<SaisieTemps> findByProjetAndUtilisateur(String nomProjet, Long userId, Date dateDebut, Date dateFin );
 }

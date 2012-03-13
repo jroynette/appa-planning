@@ -18,14 +18,14 @@ import javax.validation.constraints.NotNull;
  *
  */
 @Entity
-public class Absence implements Serializable {
+public class Absence implements Serializable,Cloneable,Comparable<Absence> {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column
-	private Integer id;
+	private Long id;
 
 	@ManyToOne
 	private Utilisateur utilisateur;
@@ -57,11 +57,18 @@ public class Absence implements Serializable {
 	@Column
 	private String commentaire;
 
+	public String getLibelleType(){
+		if(TypeAbsence.AUTRE.equals(type)){
+			return commentaire;
+		}
+		return type.toString();
+	}
+
 	public Boolean getDebutPM() {
 		return debutPM;
 	}
 
-	public void setDebutAM(Boolean debutPM) {
+	public void setDebutPM(Boolean debutPM) {
 		this.debutPM = debutPM;
 	}
 
@@ -69,15 +76,15 @@ public class Absence implements Serializable {
 		return finAM;
 	}
 
-	public void setFinPM(Boolean finAM) {
+	public void setFinAM(Boolean finAM) {
 		this.finAM = finAM;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -152,5 +159,19 @@ public class Absence implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Absence cloneAbsence() {
+		try {
+			return (Absence)super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public int compareTo(Absence o) {
+		return this.dateDebut.compareTo(o.dateDebut);
 	}
 }

@@ -6,9 +6,11 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("dev")
 public class DataGeneratorService {
 
 	@Autowired
@@ -62,23 +64,23 @@ public class DataGeneratorService {
 		// Divers
 		// Projets Sivom
 		
-		Locale.setDefault(new Locale("fr-FR"));
-		
-		//
-		dataGenerator.createProjet("projet1", 2012);
-		dataGenerator.createProjet("projet2", 2012);
-		dataGenerator.createProjet("projet3", 2012);
-
-		dataGenerator.createUtilisateur("user1");
-		dataGenerator.createUtilisateur("user2", "responsable");
-
-		dataGenerator.createSaisieTemps("user1", "projet1", "02/01/2012", 2);
-		dataGenerator.createSaisieTemps("user1", "projet1", "03/01/2012", 4);
-		dataGenerator.createSaisieTemps("user1", "projet2", "02/01/2012", 5);
-
-		dataGenerator.createSaisieTemps("user2", "projet1", "01/01/2012", 5);
-		dataGenerator.createSaisieTemps("user2", "projet1", "02/01/2012", 7);
-		dataGenerator.createSaisieTemps("user2", "projet2", "01/01/2012", 3);
+//		Locale.setDefault(new Locale("fr-FR"));
+//		
+//		//
+//		dataGenerator.createProjet("projet1", 2012);
+//		dataGenerator.createProjet("projet2", 2012);
+//		dataGenerator.createProjet("projet3", 2012);
+//
+//		dataGenerator.createUtilisateur("user1");
+//		dataGenerator.createUtilisateur("user2", "responsable");
+//
+//		dataGenerator.createSaisieTemps("user1", "projet1", "02/01/2012", 2);
+//		dataGenerator.createSaisieTemps("user1", "projet1", "03/01/2012", 4);
+//		dataGenerator.createSaisieTemps("user1", "projet2", "02/01/2012", 5);
+//
+//		dataGenerator.createSaisieTemps("user2", "projet1", "01/01/2012", 5);
+//		dataGenerator.createSaisieTemps("user2", "projet1", "02/01/2012", 7);
+//		dataGenerator.createSaisieTemps("user2", "projet2", "01/01/2012", 3);
 	}
 
 }

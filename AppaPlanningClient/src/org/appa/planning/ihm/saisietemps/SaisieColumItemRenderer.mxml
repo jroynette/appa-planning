@@ -6,6 +6,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import org.appa.planning.bo.Absence;
 			import org.appa.planning.bo.SaisieTempsProjetJour;
 			import org.appa.planning.bo.SaisieTempsSemaine;
 		
@@ -13,6 +14,7 @@
 			{
 				var jour:String = advancedDataGridListData.dataField;
 				var saisiesTemps:SaisieTempsSemaine = (advancedDataGridListData.owner.document as SaisieTemps).temps;
+				var absences:Object = saisiesTemps.absences;
 				super.data = value.temps[jour] as SaisieTempsProjetJour;
 				
 				//jour ferie
@@ -25,12 +27,37 @@
 					return;
 				}
 				
-				//saisie temps
-				hide("blocFerie");
-				hide("blocAbsence");
-				hide("blocAbsenceAM");
-				show("lblData");
-				hide("blocAbsencePM");
+				//absences
+				var absence:Absence = absences[jour]; 
+				if(absence != null){
+					hide("blocFerie");
+					if(absence.debutPM){
+						hide("blocAbsence");
+						show("blocAbsencePM");
+						show("lblData");
+						hide("blocAbsenceAM");
+					}else{
+						if(absence.finAM){
+							hide("blocAbsence");
+							hide("blocAbsencePM");
+							show("lblData");
+							show("blocAbsenceAM");
+						}else{
+							show("blocAbsence");
+							hide("blocAbsenceAM");
+							hide("lblData");
+							hide("blocAbsencePM");
+							return;
+						}
+					}
+				}else{
+					//saisie temps
+					hide("blocFerie");
+					hide("blocAbsence");
+					hide("blocAbsenceAM");
+					show("lblData");
+					hide("blocAbsencePM");
+				}
 				
 				if(super.data.heures == 0){
 					lblData.text = "";
@@ -40,21 +67,18 @@
 				lblData.toolTip = super.data.commentaire;
 			}
 			
-			protected function lblData_clickHandler(event:MouseEvent):void
-			{
+			protected function cell_clickHandler(event:MouseEvent):void
+			{	
 				if(super.data != null){
-					/* super.data.heures = (super.data.heures + 1)%9;
-					lblData.text = super.data.heures;
-				
-					(advancedDataGridListData.owner.document as SaisieTemps).refreshTotal(advancedDataGridListData.dataField); */
 					
-					hide("lblData");
-					show("input");
-					input.text = lblData.text;
-					input.setFocus();
-					input.selectAll();
-					
-					input.addEventListener(KeyboardEvent.KEY_DOWN,checkEnter);
+					if(lblData.visible){	
+						hide("lblData");
+						show("input");
+						input.text = lblData.text;
+						input.setFocus();
+						input.selectAll();
+						input.addEventListener(KeyboardEvent.KEY_DOWN,checkEnter);
+					}
 				}
 			}
 			
@@ -94,13 +118,13 @@
 		]]>
 	</fx:Script>
 	
-	<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%" click="lblData_clickHandler(event)" toolTip="{data.commentaire}" >
+	<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%"  toolTip="{data.commentaire}"  click="cell_clickHandler(event)">
 		<s:Rect id="blocFerie" width="100%" height="100%" visible="false" includeInLayout="false">
 			<s:fill>
 				<s:LinearGradient rotation="90">
 					<s:entries>
-						<s:GradientEntry color="0x965151" />
-						<s:GradientEntry color="0x965151" alpha="0.5"/>
+						<s:GradientEntry color="0xFFB600" />
+						<s:GradientEntry color="0xFFB600" alpha="0.5"/>
 					</s:entries>	
 				</s:LinearGradient>
 			</s:fill>
@@ -125,7 +149,7 @@
 				</s:LinearGradient>
 			</s:fill>
 		</s:Rect>
-		<s:Label id="lblData" />
+		<s:Label id="lblData" width="50%" textAlign="center"/>
 		<s:TextInput id="input" visible="false" includeInLayout="false" width="100%" height="100%" 
 					 focusOut="input_focusOutHandler(event)" restrict="0-9"/>
 		<s:Rect id="blocAbsencePM" width="50%" height="100%" visible="false" includeInLayout="false">

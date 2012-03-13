@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.appa.planning.bo.Projet;
+import org.appa.planning.bo.Site;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -94,4 +95,12 @@ privileged aspect ProjetController_Roo_Controller {
         return pathSegment;
     }
     
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public String ProjetController.delete(@PathVariable("id") Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+        Projet.findProjet(id).remove();
+        uiModel.asMap().clear();
+        uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
+        uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
+        return "redirect:/projets";
+    }
 }

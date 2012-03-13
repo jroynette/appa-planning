@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.appa.planning.bo.Absence;
@@ -12,7 +11,7 @@ import org.appa.planning.bo.JourSemaine;
 
 
 /**
- * Classe repreésentant l'ensemble des saisies de temps par projet sur une semaine
+ * Classe repreï¿½sentant l'ensemble des saisies de temps par projet sur une semaine
  * 
  * @author jroynette
  *
@@ -27,7 +26,7 @@ public class SaisieTempsSemaine {
 
 	private Map<JourSemaine,Boolean> joursFeries = new HashMap<JourSemaine, Boolean>();
 
-	private List<Absence> absences = new ArrayList<Absence>();
+	private Map<JourSemaine,Absence> absences = new HashMap<JourSemaine, Absence>();
 
 	public SaisieTempsSemaine(){
 		for (JourSemaine jour : JourSemaine.values()) {
@@ -68,11 +67,11 @@ public class SaisieTempsSemaine {
 		this.joursFeries = joursFeries;
 	}
 
-	public List<Absence> getAbsences() {
+	public Map<JourSemaine,Absence> getAbsences() {
 		return absences;
 	}
 
-	public void setAbsences(List<Absence> absences) {
+	public void setAbsences(Map<JourSemaine,Absence> absences) {
 		this.absences = absences;
 	}
 }

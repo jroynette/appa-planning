@@ -19,7 +19,6 @@ privileged aspect Utilisateur_Roo_ToString {
         sb.append("Prenom: ").append(getPrenom()).append(", ");
         sb.append("Quatrevingt: ").append(getQuatrevingt()).append(", ");
         sb.append("Role: ").append(getRole()).append(", ");
-        sb.append("Site: ").append(getSite()).append(", ");
         sb.append("Version: ").append(getVersion());
         return sb.toString();
     }

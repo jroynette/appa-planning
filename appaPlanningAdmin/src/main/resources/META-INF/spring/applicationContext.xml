@@ -107,5 +107,20 @@
 	</bean>
 	
 	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="classpath:/ehcache.xml"/>
-    
+	
+<!-- 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"> -->
+<!--         <property name="host" value="smtp.postmarkapp.com"/> -->
+<!--         <property name="port" value="2525"/> -->
+<!--         <property name="username" value="d1d49b70-af43-4ab9-b69b-2d54aea42930"/> -->
+<!--         <property name="password" value="d1d49b70-af43-4ab9-b69b-2d54aea42930"/> -->
+<!--         <property name="javaMailProperties"> -->
+<!--            	<props> -->
+<!--                 <prop key="mail.transport.protocol">smtp</prop> -->
+<!--                 <prop key="mail.smtp.auth">true</prop> -->
+<!--                 <prop key="mail.smtp.starttls.enable">true</prop> -->
+<!--                 <prop key="mail.debug">true</prop> -->
+<!--             </props> -->
+<!--         </property> -->
+<!--     </bean> -->
+
 </beans>

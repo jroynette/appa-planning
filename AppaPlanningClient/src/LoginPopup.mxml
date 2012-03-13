@@ -30,14 +30,18 @@
 			}
 			
 			protected function loginHandler(event:ResultEvent):void{
-				var user:Utilisateur = event.result as Utilisateur;
+				
+				var user:Utilisateur = event.result.utilisateur as Utilisateur;
 				UserContext.instance.user = user;
+				UserContext.instance.compteurs = event.result.compteurs;
+				UserContext.instance.absences = event.result.absences;
+				
 				PopUpManager.removePopUp(this);
 			}
 			
 			protected function creationComplete(event:FlexEvent):void
 			{
-				// TODO Auto-generated method stub
+				//pour le debug
 				//usersRO.getOperation("login").send(login.text,password.text);
 			}
 			
@@ -47,7 +51,7 @@
 	
 	<s:Form>
 		<s:FormItem label="Login">
-			<s:TextInput id="login"/>
+			<s:TextInput id="login" text="user2"/>
 		</s:FormItem>
 		<s:FormItem label="Password">
 			<s:TextInput id="password" displayAsPassword="true"/>

@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
-@ContextConfiguration(locations={"/spring/app-context.xml"})
+@ContextConfiguration(locations={"/META-INF/spring/applicationContext.xml"})
 @ActiveProfiles(profiles={"dev"})
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback=true)

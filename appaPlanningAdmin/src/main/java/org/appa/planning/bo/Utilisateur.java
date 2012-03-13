@@ -9,6 +9,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.appa.planning.bo.Site;
 import org.hibernate.validator.constraints.Email;
 
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 @RooJavaBean
@@ -48,7 +49,29 @@ public class Utilisateur {
 
     private Boolean actif = true;
 
-    @ManyToOne
-    @NotNull
-    private Site site;
+//    @ManyToOne(fetch=FetchType.EAGER)
+//    @NotNull
+//    private Site site;
+
+    @Max(99)
+    private Integer deltaJoursConges = 0;
+
+    @Max(99)
+    private Integer deltaJoursRTT = 0;
+
+	public Integer getDeltaJoursConges() {
+		return deltaJoursConges;
+	}
+
+	public void setDeltaJoursConges(Integer deltaJoursConges) {
+		this.deltaJoursConges = deltaJoursConges;
+	}
+
+	public Integer getDeltaJoursRTT() {
+		return deltaJoursRTT;
+	}
+
+	public void setDeltaJoursRTT(Integer deltaJoursRTT) {
+		this.deltaJoursRTT = deltaJoursRTT;
+	}
 }

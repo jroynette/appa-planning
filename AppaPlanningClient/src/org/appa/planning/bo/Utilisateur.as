@@ -13,6 +13,12 @@ package org.appa.planning.bo
 		public var prenom:String;
 		
 		public var role:String;
+		
+		public var email:String;
+		
+		public function toString():String{
+			return prenom + " " + nom;
+		}
 				
 	}
 }

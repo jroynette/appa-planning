@@ -37,3 +37,14 @@ security setup
 // Spring Roo 1.1.5.RELEASE [rev d3a68c3] log closed at 2011-11-21 08:34:00
 // Spring Roo 1.1.5.RELEASE [rev d3a68c3] log opened at 2012-02-03 11:51:36
 // Spring Roo 1.1.5.RELEASE [rev d3a68c3] log closed at 2012-02-03 16:21:55
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log opened at 2012-03-01 14:29:30
+hint
+hint fileds
+hint fields
+// [failed] field number --class org.appa.planning.bo.Utilisateur --fieldName deltaConges --type java.lang.Integer
+// [failed] field number --class org.appa.planning.bo.Utilisateur --fieldName deltaConges --type java.lang.Integer
+field number --class org.appa.planning.bo.Utilisateur --fieldName deltaJoursConges --type java.lang.Integer
+field number --class org.appa.planning.bo.Utilisateur --fieldName deltaJoursRTT --type java.lang.Integer
+web mvc all --package org.appa.planning.web 
+web mvc update tags
+// Spring Roo 1.1.5.RELEASE [rev d3a68c3] log closed at 2012-03-01 17:33:25

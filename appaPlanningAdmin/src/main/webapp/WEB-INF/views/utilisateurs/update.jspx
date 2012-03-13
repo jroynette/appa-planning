@@ -12,6 +12,7 @@
         <field:checkbox field="quatrevingt" id="c_org_appa_planning_bo_Utilisateur_quatrevingt" z="uJyl3wgru/KXNcK3lYGbe82MK9U="/>
         <field:checkbox field="actif" id="c_org_appa_planning_bo_Utilisateur_actif" z="OMTt8QcTyBuAKB1KW6p8t+eqZCo="/>
         <field:select field="role" id="c_org_appa_planning_bo_Utilisateur_role" items="${userroles}" path="userroles" required="true" z="6LnajnZnrHQfMHlBRVnrEhNapuk="/>
-        <field:select field="site" id="c_org_appa_planning_bo_Utilisateur_site" itemValue="id" items="${sites}" path="/sites" required="true" z="K/LZZYlufjp+lnEHHmQt85WtmbI="/>
+    	<field:input field="deltaJoursConges" id="c_org_appa_planning_bo_Utilisateur_deltaJoursConges" max="99"/>
+        <field:input field="deltaJoursRTT" id="c_org_appa_planning_bo_Utilisateur_deltaJoursRTT" max="99"/>
     </form:update>
 </div>

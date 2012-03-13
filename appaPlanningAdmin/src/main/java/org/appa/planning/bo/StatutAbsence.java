@@ -1,13 +1,13 @@
 package org.appa.planning.bo;
 
 /**
- * Objet métier représentant les différents status d'une absence
+ * Objet mï¿½tier reprï¿½sentant les diffï¿½rents status d'une absence
  * 
  * @author jroynett
  *
  */
 public enum StatutAbsence {
 
-	POSE,VALIDE,REFUSE,ANNULE
+	POSE,VALIDE,REFUSE
 
 }

@@ -21,7 +21,7 @@
 	</fx:Script>
 	
 	<s:VGroup>
-		<s:TextArea width="300" height="150" text="@{saisie.commentaire}" borderVisible="false"/>
+		<s:TextArea width="300" height="150" text="@{saisie.commentaire}" borderVisible="false" maxChars="100"/>
 	</s:VGroup>
 	
 	

@@ -1,0 +1,7 @@
+insert into Site(id,nom) values(1,'NPC')
+insert into Utilisateur(id,actif,email,login,nbConges,nbRTT,nom,prenom,quatrevingt,role,version,deltaJoursConges,deltaJoursRTT) values(1,1,'jroynette@gmail.com','user1',10,10,'nom','prenom',1,0,1,0,0)
+insert into Utilisateur(id,actif,email,login,nbConges,nbRTT,nom,prenom,quatrevingt,role,version,deltaJoursConges,deltaJoursRTT) values(2,1,'jroynette@gmail.com','user2',10,10,'nom2','prenom2',1,1,1,0,0)
+insert into Projet values (1,2012,'desc','test',1)
+insert into Projet values (2,2012,'desc1','test1',1)
+insert into Projet values (3,2012,'desc2','test2',1)
+insert into Projet values (4,2012,'desc3','test3',1)
