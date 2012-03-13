@@ -167,7 +167,6 @@ public class PostmarkMailSender implements MailSender {
 
 	@Override
 	public void send(SimpleMailMessage[] simpleMessages) throws MailException {
-		///FIXME default naive, non-optimal implementation (sequentially opens simpleMessages.length HTTP connections...)
 		Map<Object, Exception> failedMessages = new LinkedHashMap<Object, Exception>();
 		for(SimpleMailMessage simpleMessage: simpleMessages) {
 			try {

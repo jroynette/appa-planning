@@ -23,13 +23,11 @@ public class GenericCrudService {
 	}
 
 	public <T> T find(Class<T> arg0, Object arg1, LockModeType arg2) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public <T> T find(Class<T> arg0, Object arg1, LockModeType arg2,
 			Map<String, Object> arg3) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
