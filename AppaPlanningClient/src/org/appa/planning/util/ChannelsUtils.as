@@ -13,8 +13,8 @@ package org.appa.planning.util
 		public function ChannelsUtils(){
 			
 			channelSet = new ChannelSet();
-			//channelSet.addChannel(new AMFChannel("amf","http://localhost:8080/appaPlanningAdmin/messagebroker/amf"));
-			channelSet.addChannel(new AMFChannel("amf","http://appaplanningadmin.cloudfoundry.com/messagebroker/amf"));
+			channelSet.addChannel(new AMFChannel("amf","http://localhost:8080/appaPlanningAdmin/messagebroker/amf"));
+			//channelSet.addChannel(new AMFChannel("amf","http://appaplanningadmin.cloudfoundry.com/messagebroker/amf"));
 		}
 	}
 }

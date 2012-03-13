@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   title="{projet} - Détails des saisies"
+			   close="PopUpManager.removePopUp(this)"
+			   creationComplete="init(event)"
+			   width="670"
+			   height="500">
+	
+	<fx:Declarations>	
+		
+		<mx:RemoteObject id="saisieTempsRO" destination="SaisieTempsService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="findByProjetAndUtilisateur" result="findByProjetAndUtilisateurHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+		<s:DateTimeFormatter id="dateFormatter" dateTimePattern="dd/MM/yyyy"/>
+		
+	</fx:Declarations>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.controls.Alert;
+			
+			import org.appa.planning.bo.Projet;
+			import org.appa.planning.bo.Utilisateur;
+			import org.appa.planning.util.ChannelsUtils;
+			
+			[Bindable]
+			public var projet:String;
+			
+			[Bindable]
+			public var user:Utilisateur;
+			
+			[Bindable]
+			public var dateDeb:Date;
+			
+			[Bindable]
+			public var dateFin:Date;
+			
+			[Bindable]
+			private var saisies:ArrayCollection;
+			
+			protected function init(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				saisieTempsRO.getOperation("findByProjetAndUtilisateur").send(
+					projet,
+					(user!=null)?user.id:null,
+					dateDeb,
+					dateFin);	
+			}
+			
+			protected function  findByProjetAndUtilisateurHandler(event:ResultEvent):void{
+				
+				this.saisies = event.result as ArrayCollection;
+			}
+						
+		]]>
+	</fx:Script>
+
+	<s:DataGrid dataProvider="{saisies}" width="100%" height="100%" borderVisible="false" selectionMode="none">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn dataField="utilisateur" headerText="Utilisateur" width="200"/>
+				<s:GridColumn dataField="date" headerText="Date" formatter="{dateFormatter}" width="80" />
+				<s:GridColumn dataField="heures" headerText="Heures" width="70"/>
+				<s:GridColumn dataField="commentaire" headerText="Commentaire" width="300" dataTipField="commentaire" showDataTips="true" sortable="false"/>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	
+</s:TitleWindow>

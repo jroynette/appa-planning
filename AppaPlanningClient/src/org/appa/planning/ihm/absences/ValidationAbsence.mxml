@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 show="init(event)">
+	
+	<fx:Declarations>
+		<mx:RemoteObject id="absenceRepoRO" destination="AbsenceRepository" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="findByStatut" result="findByStatutHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+		<mx:RemoteObject id="absenceRO" destination="AbsenceService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="validerAbsence" result="refresh()" fault="Alert.show(event.fault.faultString)" />
+			<mx:method name="refuserAbsence" result="refresh()" fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.DateField;
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import org.appa.planning.util.ChannelsUtils;
+			
+			[Bindable]
+			private var demandes:ArrayCollection;
+			
+			protected function init(event:FlexEvent):void
+			{
+				absenceRepoRO.getOperation("findByStatut").send("POSE");
+			}
+			
+			protected function refresh():void
+			{
+				absenceRepoRO.getOperation("findByStatut").send("POSE");
+			}
+			
+			public function findByStatutHandler(event:ResultEvent):void{
+				demandes = event.result as ArrayCollection;
+			}
+			
+			public function accepter(item:Object):void{
+				absenceRO.getOperation("validerAbsence").send(item.id);
+			}
+			
+			public function refuser(item:Object):void{
+				absenceRO.getOperation("refuserAbsence").send(item.id);
+			}
+			
+			protected function poserAbsence(event:MouseEvent):void
+			{
+				var popup:PoserAbsencePopup= new PoserAbsencePopup();
+				PopUpManager.addPopUp(popup,FlexGlobals.topLevelApplication as DisplayObject);
+				PopUpManager.centerPopUp(popup);
+			}
+			
+			protected function date_labelfunction(item:Object, column:GridColumn):String{
+				var debutPM:String = (item.debutPM)?'(A)':'';
+				var finAm:String = (item.finAM)?'(M)':'';
+				var dateDeb:String = DateField.dateToString(item.dateDebut,'DD/MM'); 
+				var dateFin:String = DateField.dateToString(item.dateFin,'DD/MM');
+				
+				if(dateDeb == dateFin){
+					return dateDeb + debutPM + finAm;
+				}
+				return dateDeb + debutPM + ' - ' + dateFin +finAm;
+			}
+
+			
+		]]>
+	</fx:Script>
+		
+	<s:Panel width="450" height="260" title="Demandes à traiter">
+		<s:VGroup width="100%" height="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+	
+			<s:DataGrid id="gridDemandesAValider" width="100%" height="100%" dataProvider="{demandes}" selectionMode="none">
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="utilisateur" headerText="Personne"/>
+						<s:GridColumn dataField="dateDebut" headerText="Date" width="130" labelFunction="date_labelfunction"/>
+						<s:GridColumn width="70" dataField="type" headerText="Type" dataTipField="commentaire" showDataTips="true"/>
+						<s:GridColumn width="30">
+							<s:itemRenderer>
+								<fx:Component>
+									<s:GridItemRenderer>
+										<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+											<s:Image width="20" height="20" source="@Embed(source='assets/tick.jpg')" toolTip="accepter" buttonMode="true"
+													 click="outerDocument.accepter(data)"/>
+										</s:HGroup>
+									</s:GridItemRenderer>
+								</fx:Component>
+							</s:itemRenderer>
+						</s:GridColumn>
+						<s:GridColumn width="30">
+							<s:itemRenderer>
+								<fx:Component>
+									<s:GridItemRenderer>
+										<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+											<s:Image width="20" height="20" source="@Embed(source='assets/delete.jpg')" toolTip="refuser" buttonMode="true"
+													 click="outerDocument.refuser(data)" />
+										</s:HGroup>
+									</s:GridItemRenderer>
+								</fx:Component>
+							</s:itemRenderer>
+						</s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+			</s:DataGrid>
+	
+		</s:VGroup>
+		
+		<s:controlBarContent>
+			<s:Spacer width="285"/>
+			<s:Button label="Poser une absence" click="poserAbsence(event)"/>
+		</s:controlBarContent>
+		
+	</s:Panel>
+	
+</s:Group>

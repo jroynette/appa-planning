@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="300" height="{form.height + 35}" 
+			   title="Nouvelle Absence"
+			   defaultButton="{submit}" 
+			   close="PopUpManager.removePopUp(this)"
+			   creationComplete="init(event)" xmlns:ihm="org.appa.planning.ihm.*">
+	
+	<fx:Declarations>
+		<mx:RemoteObject id="absenceRO" destination="AbsenceService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="poserAbsence" result="poserAbsenceHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+			<mx:method name="loadSessionUtilisateur" result="loadSessionUtilisateurHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+		<mx:RemoteObject id="calendarRO" destination="CalendarService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="false"> 
+			<mx:method name="getJourFeries" result="getJoursFeriesHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+			<mx:method name="loadEvenements" result="loadEvenementsHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+		<s:RadioButtonGroup id="type" />
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.StringUtil;
+			
+			import org.appa.planning.bo.Absence;
+			import org.appa.planning.bo.Utilisateur;
+			import org.appa.planning.util.ChannelsUtils;
+			import org.appa.planning.util.UserContext;
+			
+			[Bindable]
+			private var absence:Absence = new Absence;
+			
+			[Bindable]
+			private var events:ArrayCollection = new ArrayCollection;
+			
+			protected function init(event:FlexEvent):void
+			{
+				calendarRO.getOperation("getJourFeries").send();
+			}
+			
+			protected function getJoursFeriesHandler(event:ResultEvent):void{
+				dateDeb.disabledRanges = (event.result as ArrayCollection).toArray();
+				dateFin.disabledRanges = (event.result as ArrayCollection).toArray();
+			}
+			
+			protected function dateDeb_changeHandler(event:Event):void
+			{
+				var dateDebutVar:Date = DateField.stringToDate(dateDeb.text,'DD/MM/YYYY');
+				var dateFinVar:Date = DateField.stringToDate(dateFin.text,'DD/MM/YYYY');
+				dateFin.selectableRange = {rangeStart: dateDebutVar};
+				if(dateFin.text == ''){
+					dateFin.text = dateDeb.text;
+				}else{
+					dateFin.text = '';
+					dateFin.selectedItem = null;
+				}
+				
+				dateFin_changeHandler(event);
+			}
+			
+			
+			protected function dateFin_changeHandler(event:Event):void
+			{
+				if(dateDeb.text != '' && dateFin.text != ''){
+					var dateDebutVar:Date = DateField.stringToDate(dateDeb.text,'DD/MM/YYYY');
+					var dateFinVar:Date = DateField.stringToDate(dateFin.text,'DD/MM/YYYY');
+					
+					dateFinVar.hours = 23;
+					dateFinVar.minutes = 59;
+					dateFinVar.seconds = 59;
+					
+					calendarRO.getOperation("loadEvenements").send(UserContext.instance.user.email,dateDebutVar,dateFinVar);
+				}
+			}
+		
+			protected function submitForm(event:MouseEvent):void
+			{
+				absence.type = type.selectedValue as String;	
+				absence.dateDebut = DateField.stringToDate(dateDeb.text,'DD/MM/YYYY');
+				absence.dateFin = DateField.stringToDate(dateFin.text,'DD/MM/YYYY');
+				
+				if(absence.type == 'AUTRE' && (absence.commentaire == null || StringUtil.isWhitespace(absence.commentaire))){
+					Alert.show("Un commentaire est obligatoire pour poser un congé de type 'Autre'");
+					return;
+				}
+				
+				if(dateDeb.text == dateFin.text && finAM.selected && debutPM.selected){
+					Alert.show("Impossible de sélectionner départ dans l'après-midi ET retour du matin car l'absence est posée sur une seule journée");
+					return;
+				}
+				
+				var dateDebutVar:Date = DateField.stringToDate(dateDeb.text,'DD/MM/YYYY');
+				var dateFinVar:Date = DateField.stringToDate(dateFin.text,'DD/MM/YYYY');
+				if(dateDebutVar > dateFinVar){
+					Alert.show("La date de fin doit être inférieure à la date début");
+					return;
+				}
+				
+				absence.utilisateur = UserContext.instance.user;
+				absenceRO.getOperation("poserAbsence").send(absence);
+			}
+			
+			protected function poserAbsenceHandler(event:ResultEvent):void{
+				absenceRO.getOperation("loadSessionUtilisateur").send(UserContext.instance.user.id,new Date());
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function loadSessionUtilisateurHandler(event:ResultEvent):void{
+				UserContext.instance.compteurs = event.result.compteurs;
+				UserContext.instance.absences = event.result.absences;
+			}
+
+			protected function loadEvenementsHandler(event:ResultEvent):void{
+				events = event.result as ArrayCollection;
+			}
+			
+		]]>
+	</fx:Script>
+
+	<s:HGroup width="100%">
+		
+	<s:Form width="100%" id="form">
+		<s:FormItem label="Type">
+			<s:RadioButton value="CONGE" label="Congé" group="{type}" selected="true"/>
+			<s:RadioButton value="RTT" label="RTT" group="{type}"/>
+			<s:RadioButton value="AUTRE" label="Autre" group="{type}"/>
+			<s:TextArea id="commentaire" maxChars="100" heightInLines="3" text="@{absence.commentaire}"
+						visible="{type.selectedValue == 'AUTRE'}" includeInLayout="{type.selectedValue == 'AUTRE'}"/>
+		</s:FormItem>
+		<s:FormItem label="Début">
+			<s:HGroup verticalAlign="bottom">
+				<mx:DateField id="dateDeb" 
+					firstDayOfWeek="1" formatString="DD/MM/YYYY" 
+					disabledDays="[0,6]"
+					dayNames="['D','L','M','M','J','V','S']"
+					monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+					change="dateDeb_changeHandler(event)" 
+					/>
+				<s:Label text="Après-Midi"/>
+				<s:CheckBox id="debutPM" toolTip="Début dans l'après-midi" selected="@{absence.debutPM}"/>
+			</s:HGroup>
+		</s:FormItem>
+		<s:FormItem label="Fin (inclus)">
+			<s:HGroup verticalAlign="bottom">
+				<mx:DateField id="dateFin" enabled="{dateDeb.text != ''}"
+					firstDayOfWeek="1" formatString="DD/MM/YYYY" 
+					disabledDays="[0,6]"
+					dayNames="['D','L','M','M','J','V','S']"
+					monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']" 
+					change="dateFin_changeHandler(event)"/>
+				<s:Label text="Matin"/>
+				<s:CheckBox id="finAM" toolTip="Retour dans l'après-midi" selected="@{absence.finAM}"/>
+			</s:HGroup>
+		</s:FormItem>
+		<s:Spacer height="7"/>
+		<s:HGroup width="100%" horizontalAlign="center">
+			<s:Button id="submit" label="Valider" click="submitForm(event)" enabled="{dateDeb.text != '' &amp;&amp; dateFin.text != ''}"/>
+		</s:HGroup>
+	</s:Form>
+		
+	<ihm:ListEvenements dataProvider="{events}" width="200" height="{form.height+2}" visible="{events.length >= 1}"/>	
+		
+	</s:HGroup>
+	
+</s:TitleWindow>

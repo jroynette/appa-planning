@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<fx:Declarations>
+		<mx:RemoteObject id="absenceRO" destination="AbsenceService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="annulerAbsence" result="annulerAbsenceHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+			<mx:method name="loadSessionUtilisateur" result="loadSessionUtilisateurHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		<mx:RemoteObject id="absenceRepoRO" destination="AbsenceRepository" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="findByUtilisateur" result="findByUtilisateurHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.DateField;
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import org.appa.planning.bo.Absence;
+			import org.appa.planning.ihm.absences.PoserAbsencePopup;
+			import org.appa.planning.util.ChannelsUtils;
+			import org.appa.planning.util.UserContext;
+			
+			[Bindable]
+			private var absencesHisto:ArrayCollection;	
+			
+			protected function poserAbsence(event:MouseEvent):void
+			{
+				var popup:PoserAbsencePopup= new PoserAbsencePopup();
+				PopUpManager.addPopUp(popup,FlexGlobals.topLevelApplication as DisplayObject);
+				PopUpManager.centerPopUp(popup);
+			}
+			
+			protected function switch_historique(event:MouseEvent):void
+			{
+				if(this.currentState == 'accueil'){
+					this.currentState = 'historique';
+					refreshHisto();
+				}else{
+					this.currentState = 'accueil';
+				}				
+			}
+				
+			protected function date_labelfunction(item:Object, column:GridColumn):String{
+				var debutPM:String = (item.debutPM)?'(A)':'';
+				var finAm:String = (item.finAM)?'(M)':'';
+				var dateDeb:String = DateField.dateToString(item.dateDebut,'DD/MM'); 
+				var dateFin:String = DateField.dateToString(item.dateFin,'DD/MM');
+				
+				if(dateDeb == dateFin){
+					return dateDeb + debutPM + finAm;
+				}
+				return dateDeb + debutPM + ' - ' + dateFin +finAm;
+			}
+			
+			public function annulerAbsence(item:Object):void{
+				absenceRO.getOperation("annulerAbsence").send(item.id);
+			}
+			
+			protected function annulerAbsenceHandler(event:ResultEvent):void{
+				absenceRO.getOperation("loadSessionUtilisateur").send(UserContext.instance.user.id,new Date());
+			}
+			
+			protected function loadSessionUtilisateurHandler(event:ResultEvent):void{
+				UserContext.instance.compteurs = event.result.compteurs;
+				UserContext.instance.absences = event.result.absences;
+			}
+			
+			protected function refreshHisto():void{
+				absenceRepoRO.getOperation("findByUtilisateur").send(
+					UserContext.instance.user.id,
+					DateField.stringToDate(dateDeb.text,'DD/MM/YYYY'),
+					DateField.stringToDate(dateFin.text,'DD/MM/YYYY')
+				);
+			}
+			
+			protected function findByUtilisateurHandler(event:ResultEvent):void{
+				absencesHisto = event.result as ArrayCollection;	
+			}
+			
+			protected function initHisto(event:FlexEvent):void
+			{
+				var now:Date = new Date();
+				var dateYearMoinsUn:Date = new Date(now.getTime() - 365 * 24 * 3600 * 1000);
+				dateDeb.selectedDate = dateYearMoinsUn;
+				dateFin.selectedDate = now;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="accueil"/>
+		<s:State name="historique"/>
+	</s:states>
+	
+	<s:transitions>
+		<s:Transition fromState="accueil" toState="historique">
+			<s:Resize target="{panelAbsences}"/>
+		</s:Transition>
+		<s:Transition fromState="historique" toState="accueil">
+			<s:Resize target="{panelAbsences}"/>
+		</s:Transition>	
+	</s:transitions>
+	
+	<s:Panel id="panelAbsences" width="100%" height="233" title="Demandes d'absences en cours" height.historique="400" title.historique="Historique">
+	<s:VGroup width="100%" height="100%" paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5">
+		<s:DataGrid id="gridAbsences" width="100%" height="100%" dataProvider="{UserContext.instance.absences}" selectionMode="none" includeIn="accueil">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn headerText="Date" labelFunction="date_labelfunction" dataField="dateDebut"/>
+					<s:GridColumn width="100" dataField="type" headerText="Type" dataTipField="commentaire" showDataTips="true"/>
+					<s:GridColumn width="100" dataField="statut" headerText="Statut"/>
+					<s:GridColumn width="30">
+						<s:itemRenderer>
+							<fx:Component>
+								<s:GridItemRenderer>
+									<fx:Script>
+										<![CDATA[
+											import mx.controls.Alert;			
+											import org.appa.planning.util.UserContext;
+										]]>
+									</fx:Script>
+									<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+										<s:Image source="@Embed(source='assets/delete.jpg')" width="20" height="20" 
+												 toolTip="annuler" visible="{data.statut == 'POSE' || data.statut == 'REFUSE'}" buttonMode="true"
+												 click="outerDocument.annulerAbsence(data);"/>
+									</s:HGroup>
+								</s:GridItemRenderer>
+							</fx:Component>
+						</s:itemRenderer>
+					</s:GridColumn>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		
+		<!-- historique -->
+		<s:HGroup width="100%" height="30" verticalAlign="middle" horizontalAlign="center" gap="10" includeIn="historique">
+			<s:Label text="Du"/>
+			<mx:DateField id="dateDeb"
+						  formatString="DD/MM/YYYY" 
+						  firstDayOfWeek="1"
+						  dayNames="['D','L','M','M','J','V','S']"
+						  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+						  change="refreshHisto()"/>
+			<s:Label text="Au"/>
+			<mx:DateField id="dateFin" 
+						  firstDayOfWeek="1" 
+						  formatString="DD/MM/YYYY" 
+						  dayNames="['D','L','M','M','J','V','S']"
+						  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+						  selectableRange="{{rangeEnd : new Date()}}"
+						  change="refreshHisto()"/>
+		</s:HGroup>
+		<s:DataGrid id="gridAbsencesHisto" width="100%" height="100%" dataProvider="{absencesHisto}" selectionMode="none" includeIn="historique" creationComplete="initHisto(event)">
+			<s:columns>
+				<s:ArrayList>
+					<s:GridColumn headerText="Date" labelFunction="date_labelfunction" dataField="dateDebut"/>
+					<s:GridColumn width="100" dataField="type" headerText="Type" dataTipField="commentaire" showDataTips="true"/>
+					<s:GridColumn width="100" dataField="statut" headerText="Statut"/>
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		
+	</s:VGroup>
+		
+	<s:controlBarContent>
+		<s:Button label="Historique" click="switch_historique(event)" label.historique="Demandes en cours"/>
+		<s:Spacer width="140" width.historique="86"/>
+		<s:Button label="Poser une absence" click="poserAbsence(event)"/>
+	</s:controlBarContent>
+</s:Panel>
+	
+</s:Group>
