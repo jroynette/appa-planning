@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.appa.planning.bo.Preferences;
+import org.appa.planning.bo.PrefsUtilisateur;
 import org.appa.planning.bo.Utilisateur;
 import org.appa.planning.repository.PreferencesRepository;
 import org.appa.planning.repository.UtilisateurRepository;
@@ -57,7 +57,7 @@ public class UtilisateurService {
 
 	public List<String> loadFiltresProjets(Long userId) throws Exception{
 
-		Preferences prefs = prefsRepo.findOne(userId);
+		PrefsUtilisateur prefs = prefsRepo.findOne(userId);
 
 		if(prefs == null){
 			return new ArrayList<String>();
@@ -75,7 +75,7 @@ public class UtilisateurService {
 		oos.flush();
 		oos.close();
 
-		Preferences prefs = new Preferences();
+		PrefsUtilisateur prefs = new PrefsUtilisateur();
 		prefs.setUserId(userId);
 		prefs.setDatas(byteArrayOutputStream.toByteArray());
 

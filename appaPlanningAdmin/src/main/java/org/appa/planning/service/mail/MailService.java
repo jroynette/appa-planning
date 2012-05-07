@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 
 import javax.annotation.PostConstruct;
 
-import org.appa.planning.bo.Absence;
+import org.appa.planning.bo.DemandeAbsence;
 import org.appa.planning.bo.TypeAbsence;
 import org.appa.planning.util.PostmarkMailSender;
 import org.springframework.context.annotation.Profile;
@@ -18,16 +18,18 @@ public class MailService implements IMailService {
 
 	private MailSender mailSender;
 
-	//TODO à remplacer
-	private static final String MAIL_RESPONSABLE =  "jroynette@gmail.com";
+	private static final String MAIL_RESPONSABLE =  "cschadkowski@appanpc.fr";
 
 	@PostConstruct
 	private void init(){
-		mailSender = new PostmarkMailSender("d1d49b70-af43-4ab9-b69b-2d54aea42930");
+		//TODO créer un compte postmark avec postmaster appa
+		//mailSender = new PostmarkMailSender("d1d49b70-af43-4ab9-b69b-2d54aea42930");
+		mailSender = new PostmarkMailSender("ed74e511-9751-4927-89bd-d738c6183655");
+
 	}
 
 	@Override
-	public void notifierCreationAbsence(Absence a){
+	public void notifierCreationAbsence(DemandeAbsence a){
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		String type = ((a.getType().equals(TypeAbsence.RTT))?"RTT":"congés");
@@ -48,7 +50,7 @@ public class MailService implements IMailService {
 	}
 
 	@Override
-	public void notifierSuppressionAbsence(Absence a){
+	public void notifierSuppressionAbsence(DemandeAbsence a){
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		String type = ((a.getType().equals(TypeAbsence.RTT))?"RTT":"congés");
@@ -72,8 +74,7 @@ public class MailService implements IMailService {
 	private void sendMail(String to, String subject, String body) {
 
 		SimpleMailMessage message = new SimpleMailMessage();
-		//TODO à remplacer
-		message.setFrom("adeconinck@appanpc.fr");
+		message.setFrom("postmaster@appanpc.fr");
 		message.setTo(to);
 		message.setSubject(subject);
 		message.setText(body);

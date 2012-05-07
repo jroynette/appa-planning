@@ -51,7 +51,7 @@
 	
 	<s:Form>
 		<s:FormItem label="Login">
-			<s:TextInput id="login" text="user2"/>
+			<s:TextInput id="login"/>
 		</s:FormItem>
 		<s:FormItem label="Password">
 			<s:TextInput id="password" displayAsPassword="true"/>

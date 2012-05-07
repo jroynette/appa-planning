@@ -3,7 +3,7 @@ package org.appa.planning.service;
 import java.util.Date;
 
 import org.appa.planning.AbstractJunitTests;
-import org.appa.planning.bo.Absence;
+import org.appa.planning.bo.DemandeAbsence;
 import org.appa.planning.bo.TypeAbsence;
 import org.appa.planning.bo.Utilisateur;
 import org.appa.planning.service.mail.IMailService;
@@ -21,7 +21,7 @@ public class MailServiceTests extends AbstractJunitTests {
 	@Test
 	public void testsaveSaisieTemps() throws Exception {
 
-		Absence absence = new Absence();
+		DemandeAbsence absence = new DemandeAbsence();
 
 		absence.setType(TypeAbsence.RTT);
 		absence.setDateDebut(new Date(2012,02,01));

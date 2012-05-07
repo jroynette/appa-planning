@@ -1,6 +1,6 @@
 package org.appa.planning.service.mail;
 
-import org.appa.planning.bo.Absence;
+import org.appa.planning.bo.DemandeAbsence;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 public class DummyMailService implements IMailService{
 
 	@Override
-	public void notifierCreationAbsence(Absence a){
+	public void notifierCreationAbsence(DemandeAbsence a){
 
 	}
 
 	@Override
-	public void notifierSuppressionAbsence(Absence a){
+	public void notifierSuppressionAbsence(DemandeAbsence a){
 
 	}
 }

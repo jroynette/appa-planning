@@ -3,14 +3,14 @@ package org.appa.planning.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.appa.planning.bo.Absence;
+import org.appa.planning.bo.DemandeAbsence;
 import org.appa.planning.bo.Utilisateur;
 
 public class SessionUtilisateur {
 	
 	private Utilisateur utilisateur;
 	
-	private List<Absence> absences = new ArrayList<Absence>();
+	private List<DemandeAbsence> absences = new ArrayList<DemandeAbsence>();
 	
 	private CompteurConges compteurs;
 
@@ -22,11 +22,11 @@ public class SessionUtilisateur {
 		this.utilisateur = utilisateur;
 	}
 
-	public List<Absence> getAbsences() {
+	public List<DemandeAbsence> getAbsences() {
 		return absences;
 	}
 
-	public void setAbsences(List<Absence> absences) {
+	public void setAbsences(List<DemandeAbsence> absences) {
 		this.absences = absences;
 	}
 

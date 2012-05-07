@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.appa.planning.bo.EvenementCalendrier;
+import org.appa.planning.bo.TypeAbsence;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.flex.remoting.RemotingDestination;
 import org.springframework.stereotype.Service;
@@ -101,7 +102,7 @@ public class GoogleCalendarService {
 					String titre = entry.getTitle().getPlainText();
 
 					//on ne recupère pas les entrées créées par l'application
-					if(titre.startsWith("RTT") || titre.startsWith("Congés")){
+					if(titre.startsWith(TypeAbsence.RTT.toString()) || titre.startsWith(TypeAbsence.CONGE.toString())){
 						break;
 					}
 

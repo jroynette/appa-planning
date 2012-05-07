@@ -96,8 +96,6 @@
 					  verticalAlign="middle">
 				<s:TileGroup  requestedRowCount="2" horizontalGap="10" verticalGap="10">
 					<s:Image width="102" height="102" buttonMode="true"
-							 source="@Embed(source='assets/calendar.jpg')" toolTip="gérer mes congés"/>
-					<s:Image width="102" height="102" buttonMode="true"
 							 source="@Embed(source='assets/horloge.png')" toolTip="saisir mes temps"
 							 click="rootViewStack.selectedChild=saisieTemps; saisieTemps.init(event)"/>
 					<s:Image buttonMode="true"
@@ -106,7 +104,9 @@
 					<s:Image width="102" height="102" buttonMode="true"
 							 source="@Embed(source='assets/Config-Tools.png')"
 							 toolTip="paramétrer l'application" click="navigateToURL(new URLRequest('http://appaplanningadmin.cloudfoundry.com/'))"/>
-					
+					<s:Image width="102" height="102" buttonMode="true" visible="{UserContext.instance.user.role == 'responsable'}"
+							 source="@Embed(source='assets/calendar.jpg')" toolTip="voir les congés"
+							 click="rootViewStack.selectedChild=absencesAdmin; absencesAdmin.init(event)"/>
 				</s:TileGroup>
 			</s:HGroup>
 			
@@ -116,6 +116,7 @@
 		
 		<reporting:Reporting id="reporting"/>
 		<saisietemps:SaisieTemps id="saisieTemps"/>
+		<absences:AbsenceAdmin id="absencesAdmin"/>
 		
 		<!--<planning:Planning id="planning" width="100%" height="100%"/>-->
 		

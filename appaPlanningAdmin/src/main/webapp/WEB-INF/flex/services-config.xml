@@ -27,23 +27,23 @@
 <!-- 		</channel-definition> -->
 	</channels>
 
-	<logging>
-		<target class="flex.messaging.log.ConsoleTarget" level="Debug">
-			<properties>
-				<prefix>[BlazeDS] </prefix>
-				<includeDate>true</includeDate>
-				<includeTime>true</includeTime>
-				<includeLevel>true</includeLevel>
-				<includeCategory>true</includeCategory>
-			</properties>
-			<filters>
-				<pattern>Endpoint.*</pattern>
-				<pattern>Service.*</pattern>
-				<pattern>Configuration</pattern>
-				<pattern>Service.Message.JMS</pattern>
-				<!-- add jms pattern for flex/blazeds debugging -->
-			</filters>
-		</target>
-	</logging>
+<!-- 	<logging> -->
+<!-- 		<target class="flex.messaging.log.ConsoleTarget" level="Debug"> -->
+<!-- 			<properties> -->
+<!-- 				<prefix>[BlazeDS] </prefix> -->
+<!-- 				<includeDate>true</includeDate> -->
+<!-- 				<includeTime>true</includeTime> -->
+<!-- 				<includeLevel>true</includeLevel> -->
+<!-- 				<includeCategory>true</includeCategory> -->
+<!-- 			</properties> -->
+<!-- 			<filters> -->
+<!-- 				<pattern>Endpoint.*</pattern> -->
+<!-- 				<pattern>Service.*</pattern> -->
+<!-- 				<pattern>Configuration</pattern> -->
+<!-- 				<pattern>Service.Message.JMS</pattern> -->
+<!-- 				add jms pattern for flex/blazeds debugging -->
+<!-- 			</filters> -->
+<!-- 		</target> -->
+<!-- 	</logging> -->
 
 </services-config>

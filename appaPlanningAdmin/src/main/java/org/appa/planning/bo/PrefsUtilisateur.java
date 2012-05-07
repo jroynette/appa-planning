@@ -3,17 +3,17 @@ package org.appa.planning.bo;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.validation.constraints.Size;
+import javax.persistence.Lob;
 
 @Entity
-public class Preferences {
+public class PrefsUtilisateur {
 
 	@Column
 	@Id
 	private Long userId;
 
 	@Column
-	@Size(max = 1000)
+	@Lob
 	private byte[] datas;
 
 	public Long getUserId() {

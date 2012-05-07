@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.appa.planning.bo.Absence;
 import org.appa.planning.bo.DejeunerExterne;
+import org.appa.planning.bo.DemandeAbsence;
 import org.appa.planning.bo.JourSemaine;
 import org.appa.planning.bo.Projet;
 import org.appa.planning.bo.SaisieTemps;
@@ -84,7 +84,7 @@ public class SaisieTempsService {
 					saisieTemps.setUtilisateur(user);
 					saisieTemps.setHeures(saisieProjetJour.getHeures());
 					saisieTemps.setCommentaire(saisieProjetJour.getCommentaire());
-					saisieTemps.setDate(DateUtils.addDays(dateDebutSemaine, saisieProjetJour.getJour().ordinal()));
+					saisieTemps.setDate(DateUtils.addDays(dateDebutSemaine, saisieProjetJour.getJour().ordinal()-1));
 
 					saisieTempsRepository.save(saisieTemps);
 				}
@@ -105,7 +105,7 @@ public class SaisieTempsService {
 			if(isDejExterne){
 				DejeunerExterne dejExterne = new DejeunerExterne();
 				dejExterne.setUtilisateur(user);
-				dejExterne.setDate(DateUtils.addDays(dateDebutSemaine, jourSemaine.ordinal()));
+				dejExterne.setDate(DateUtils.addDays(dateDebutSemaine, jourSemaine.ordinal()-1));
 
 				dejeunerExterneRepository.save(dejExterne);
 			}
@@ -168,8 +168,8 @@ public class SaisieTempsService {
 		}
 
 		//recup des jours de conges
-		List<Absence> absences = absenceRepository.findByUtilisateur(user.getId(), dateDebutSemaine, dateFinSemaine);
-		for (Absence absence : absences) {
+		List<DemandeAbsence> absences = absenceRepository.findByUtilisateur(user.getId(), dateDebutSemaine, dateFinSemaine);
+		for (DemandeAbsence absence : absences) {
 			if(absence.getStatut().equals(StatutAbsence.VALIDE)){
 
 				GregorianCalendar calendarAbsence = new GregorianCalendar();
@@ -178,13 +178,13 @@ public class SaisieTempsService {
 				while(!DateUtils.isSameDay(calendarAbsence.getTime(), dateFinPlusUn)){
 					JourSemaine jourAbsence = JourSemaine.values()[calendarAbsence.get(Calendar.DAY_OF_WEEK)-1];
 
-					Absence existingAbsence = planningHebdo.getAbsences().get(jourAbsence);
+					DemandeAbsence existingAbsence = planningHebdo.getAbsences().get(jourAbsence);
 					if(existingAbsence != null){
 						//si une absence existe deja sur la meme journee, alors on merge les 2 demi journees d'absences en une absence d'1 journee
 						existingAbsence.setDebutPM(false);
 						existingAbsence.setFinAM(false);
 					}else{
-						Absence absenceTmp = absence.cloneAbsence();
+						DemandeAbsence absenceTmp = absence.cloneAbsence();
 						if(absenceTmp.getDebutPM() && !DateUtils.isSameDay(calendarAbsence.getTime(), absenceTmp.getDateDebut())){
 							absenceTmp.setDebutPM(false);
 						}
@@ -207,6 +207,8 @@ public class SaisieTempsService {
 			Projet projet = saisie.getProjet();
 			Integer nbHeures = saisie.getHeures();
 			String comment = saisie.getCommentaire();
+
+			System.out.println("!!!!" + saisie.getProjet().getNom() + " - " + calendarSaisie.getTime() + " -" + calendarSaisie.get(Calendar.DAY_OF_WEEK) + " - " + nbHeures);
 
 			SaisieTempsProjet saisieProjet = projetsSaisis.get(projet.getNom());
 			JourSemaine jourSaisie = JourSemaine.values()[calendarSaisie.get(Calendar.DAY_OF_WEEK)-1];

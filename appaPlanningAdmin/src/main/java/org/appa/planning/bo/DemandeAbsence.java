@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -18,7 +19,7 @@ import javax.validation.constraints.NotNull;
  *
  */
 @Entity
-public class Absence implements Serializable,Cloneable,Comparable<Absence> {
+public class DemandeAbsence implements Serializable,Cloneable,Comparable<DemandeAbsence> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,17 +35,15 @@ public class Absence implements Serializable,Cloneable,Comparable<Absence> {
 	@Column
 	private Date dateDebut;
 
-	@NotNull
 	@Column
-	private Boolean debutPM;
+	private boolean debutPM = false;
 
 	@NotNull
 	@Column
 	private Date dateFin;
 
-	@NotNull
 	@Column
-	private Boolean finAM;
+	private boolean finAM = false;
 
 	@NotNull
 	@Column
@@ -57,6 +56,18 @@ public class Absence implements Serializable,Cloneable,Comparable<Absence> {
 	@Column
 	private String commentaire;
 
+	//champ non persisté
+	@Transient
+	private float nbJours;
+
+	public float getNbJours() {
+		return nbJours;
+	}
+
+	public void setNbJours(float nbJours) {
+		this.nbJours = nbJours;
+	}
+
 	public String getLibelleType(){
 		if(TypeAbsence.AUTRE.equals(type)){
 			return commentaire;
@@ -64,19 +75,19 @@ public class Absence implements Serializable,Cloneable,Comparable<Absence> {
 		return type.toString();
 	}
 
-	public Boolean getDebutPM() {
+	public boolean getDebutPM() {
 		return debutPM;
 	}
 
-	public void setDebutPM(Boolean debutPM) {
+	public void setDebutPM(boolean debutPM) {
 		this.debutPM = debutPM;
 	}
 
-	public Boolean getFinAM() {
+	public boolean getFinAM() {
 		return finAM;
 	}
 
-	public void setFinAM(Boolean finAM) {
+	public void setFinAM(boolean finAM) {
 		this.finAM = finAM;
 	}
 
@@ -152,7 +163,7 @@ public class Absence implements Serializable,Cloneable,Comparable<Absence> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Absence other = (Absence) obj;
+		DemandeAbsence other = (DemandeAbsence) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -161,9 +172,9 @@ public class Absence implements Serializable,Cloneable,Comparable<Absence> {
 		return true;
 	}
 
-	public Absence cloneAbsence() {
+	public DemandeAbsence cloneAbsence() {
 		try {
-			return (Absence)super.clone();
+			return (DemandeAbsence)super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 			return null;
@@ -171,7 +182,7 @@ public class Absence implements Serializable,Cloneable,Comparable<Absence> {
 	}
 
 	@Override
-	public int compareTo(Absence o) {
+	public int compareTo(DemandeAbsence o) {
 		return this.dateDebut.compareTo(o.dateDebut);
 	}
 }

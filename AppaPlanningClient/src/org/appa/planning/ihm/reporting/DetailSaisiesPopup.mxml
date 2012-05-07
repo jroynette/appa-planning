@@ -48,7 +48,6 @@
 			
 			protected function init(event:FlexEvent):void
 			{
-				// TODO Auto-generated method stub
 				saisieTempsRO.getOperation("findByProjetAndUtilisateur").send(
 					projet,
 					(user!=null)?user.id:null,

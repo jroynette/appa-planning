@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.appa.planning.bo.Absence;
+import org.appa.planning.bo.DemandeAbsence;
 import org.appa.planning.bo.StatutAbsence;
 import org.appa.planning.bo.TypeAbsence;
 import org.appa.planning.bo.UserRole;
@@ -53,7 +53,7 @@ public class AbsenceService {
 	 * @throws AbsenceException
 	 */
 	@Transactional
-	public void poserAbsence(Absence absence) throws Exception{
+	public void poserAbsence(DemandeAbsence absence) throws Exception{
 
 		absence.setStatut(StatutAbsence.POSE);
 
@@ -66,8 +66,8 @@ public class AbsenceService {
 				&& isPeriodeCouranteRTT(absence.getDateDebut()) && !isPeriodeCouranteRTT(absence.getDateFin())){
 
 			//division en 2 absences (1 par période)
-			Absence absencePeriodeCourante = absence.cloneAbsence();
-			Absence absencePeriodeSuivante = absence.cloneAbsence();
+			DemandeAbsence absencePeriodeCourante = absence.cloneAbsence();
+			DemandeAbsence absencePeriodeSuivante = absence.cloneAbsence();
 			absencePeriodeCourante.setDateFin(getDateFinPeriodeRTT(absence.getDateDebut()));
 			absencePeriodeSuivante.setDateDebut(getDateDebutPeriodeRTT(absence.getDateFin()));
 
@@ -80,8 +80,8 @@ public class AbsenceService {
 				&& isPeriodeCouranteConges(absence.getDateDebut()) && !isPeriodeCouranteConges(absence.getDateFin())){
 
 			//division en 2 absences (1 par période)
-			Absence absencePeriodeCourante = absence.cloneAbsence();
-			Absence absencePeriodeSuivante = absence.cloneAbsence();
+			DemandeAbsence absencePeriodeCourante = absence.cloneAbsence();
+			DemandeAbsence absencePeriodeSuivante = absence.cloneAbsence();
 			absencePeriodeCourante.setDateFin(getDateFinPeriodeConges(absence.getDateDebut()));
 			absencePeriodeSuivante.setDateDebut(getDateDebutPeriodeConges(absence.getDateFin()));
 
@@ -110,9 +110,9 @@ public class AbsenceService {
 		valFinTime -= (absence.getFinAM())?43200000:0;
 		valFinTime -= 1;
 
-		List<Absence> absencesPeriode = absenceRepository.findByUtilisateur(utilisateur.getId(), absence.getDateDebut(), absence.getDateFin());
+		List<DemandeAbsence> absencesPeriode = absenceRepository.findByUtilisateur(utilisateur.getId(), absence.getDateDebut(), absence.getDateFin());
 
-		for (Absence absencePeriode : absencesPeriode) {
+		for (DemandeAbsence absencePeriode : absencesPeriode) {
 
 			long tmpValDebutTime = absencePeriode.getDateDebut().getTime();
 			tmpValDebutTime += (absencePeriode.getDebutPM())?43200000:0;
@@ -172,7 +172,7 @@ public class AbsenceService {
 	@Transactional
 	public void validerAbsence(Long id) throws Exception{
 
-		Absence absence = absenceRepository.findOne(id);
+		DemandeAbsence absence = absenceRepository.findOne(id);
 
 		if(absence == null){
 			throw new AbsenceException("l'absence a été annulee");
@@ -197,7 +197,7 @@ public class AbsenceService {
 	@Transactional
 	public void refuserAbsence(Long id) throws Exception{
 
-		Absence absence = absenceRepository.findOne(id);
+		DemandeAbsence absence = absenceRepository.findOne(id);
 
 		if(absence == null){
 			throw new AbsenceException("l'absence a été annulee");
@@ -223,7 +223,7 @@ public class AbsenceService {
 	@Transactional
 	public void annulerAbsence(Long id) throws Exception{
 
-		Absence absence = absenceRepository.findOne(id);
+		DemandeAbsence absence = absenceRepository.findOne(id);
 
 		if(absence == null){
 			throw new AbsenceException("l'absence a ete supprimee");
@@ -259,13 +259,13 @@ public class AbsenceService {
 		session.setUtilisateur(utilisateur);
 
 		//recuperation des rtt de l'utilisateur sur la période liée à la date d'absence souhaitée
-		List<Absence> rtts = absenceRepository.findByUtilisateur(utilisateur.getId(), getDateDebutPeriodeRTT(dateAbsence), getDateFinPeriodeRTT(dateAbsence), TypeAbsence.RTT);
+		List<DemandeAbsence> rtts = absenceRepository.findByUtilisateur(utilisateur.getId(), getDateDebutPeriodeRTT(dateAbsence), getDateFinPeriodeRTT(dateAbsence), TypeAbsence.RTT);
 
 		//recuperation des conges de l'utilisateur sur la période liée à la date d'absence souhaitée
-		List<Absence> conges = absenceRepository.findByUtilisateur(utilisateur.getId(), getDateDebutPeriodeConges(dateAbsence), getDateFinPeriodeConges(dateAbsence), TypeAbsence.CONGE);
+		List<DemandeAbsence> conges = absenceRepository.findByUtilisateur(utilisateur.getId(), getDateDebutPeriodeConges(dateAbsence), getDateFinPeriodeConges(dateAbsence), TypeAbsence.CONGE);
 
 		//recuperation des conges de l'utilisateur sur la période liée à la date d'absence souhaitée
-		List<Absence> autresConges = absenceRepository.findByUtilisateur(utilisateur.getId(), now, DateUtils.addYears(now, 1), TypeAbsence.AUTRE);
+		List<DemandeAbsence> autresConges = absenceRepository.findByUtilisateur(utilisateur.getId(), now, DateUtils.addYears(now, 1), TypeAbsence.AUTRE);
 
 		//init des compteurs par rapport aux infos utilisateurs (congés/RTT de l'année + deltas éventuels)
 		CompteurConges compteurs = new CompteurConges();
@@ -283,7 +283,7 @@ public class AbsenceService {
 
 		//maj des compteurs par rapport à la liste des absences
 		//TODO gérer les cas de 80%
-		for (Absence rtt : rtts) {
+		for (DemandeAbsence rtt : rtts) {
 			if(!rtt.getStatut().equals(StatutAbsence.REFUSE)){
 				float nbJours = getNbJoursForAbsence(rtt);
 				compteurs.setRttAposer(compteurs.getRttAposer() - nbJours);
@@ -296,7 +296,7 @@ public class AbsenceService {
 			}
 		}
 
-		for (Absence conge : conges) {
+		for (DemandeAbsence conge : conges) {
 			if(!conge.getStatut().equals(StatutAbsence.REFUSE)){
 				float nbJours = getNbJoursForAbsence(conge);
 				compteurs.setCongesAposer(compteurs.getCongesAposer() - nbJours);
@@ -309,7 +309,7 @@ public class AbsenceService {
 			}
 		}
 
-		for (Absence conge : autresConges) {
+		for (DemandeAbsence conge : autresConges) {
 			if(conge.getDateDebut().after(now)){
 				session.getAbsences().add(conge);
 			}
@@ -320,7 +320,7 @@ public class AbsenceService {
 		return session;
 	}
 
-	private float getNbJoursForAbsence(Absence absence) throws Exception{
+	private float getNbJoursForAbsence(DemandeAbsence absence) throws Exception{
 
 		//nombre de jours d'écart entre datedeb et dateFin
 		float nbJours = Days.daysBetween(new DateTime(absence.getDateDebut()),new DateTime(absence.getDateFin())).getDays();
@@ -345,7 +345,9 @@ public class AbsenceService {
 		//supprimer les jours feries
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(absence.getDateDebut());
+		//gestion des dates différentes dans le cloud
 		while(!DateUtils.isSameDay(calendar.getTime(),absence.getDateFin())){
+			System.out.println("!!!! " + calendar.getTime() + ">" + calendar.get(Calendar.DAY_OF_WEEK));
 			if(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7){
 				nbJours -= 1;
 			}
@@ -409,7 +411,7 @@ public class AbsenceService {
 		return date.before(DateUtils.addSeconds(dateFinPeriodeCourante, 1));
 	}
 
-	private void sendToGoogleCalendar(Utilisateur utilisateur, Absence absence, boolean update) throws Exception{
+	private void sendToGoogleCalendar(Utilisateur utilisateur, DemandeAbsence absence, boolean update) throws Exception{
 
 		Date dateDebutEvent = absence.getDateDebut();
 		if(absence.getDebutPM()){
@@ -433,7 +435,7 @@ public class AbsenceService {
 		}
 	}
 
-	private void removeFromGoogleCalendar(Utilisateur utilisateur, Absence absence) throws Exception{
+	private void removeFromGoogleCalendar(Utilisateur utilisateur, DemandeAbsence absence) throws Exception{
 
 		Date dateDebutEvent = absence.getDateDebut();
 		if(absence.getDebutPM()){
@@ -451,4 +453,33 @@ public class AbsenceService {
 
 	}
 
+	/**
+	 * permet de récupérer la liste des absences sur une période donée
+	 * @param utilisateurId
+	 * @param dateDebut
+	 * @param dateFin
+	 * @return
+	 * @throws Exception
+	 */
+	public List<DemandeAbsence> loadAbsences(Long userId, Date dateDebut, Date dateFin) throws Exception{
+
+		List<DemandeAbsence> absences = this.absenceRepository.findByUtilisateur(userId, dateDebut, dateFin);
+
+		//calcul du nb de jours par absence
+		for (DemandeAbsence absence : absences) {
+			//dans le cas des absences qui sortent de la période, on 'coupe' les périodes d'absences concernées
+			//le calcul du nb de jour devant se faire sur la période sélectionnée uniquement
+			if(absence.getDateDebut().before(dateDebut)){
+				absence.setDateDebut(dateDebut);
+			}
+			if(absence.getDateFin().after(dateFin)){
+				absence.setDateFin(dateFin);
+			}
+
+			absence.setNbJours(getNbJoursForAbsence(absence));
+		}
+
+		return absences;
+
+	}
 }

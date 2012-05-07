@@ -272,6 +272,7 @@
 									  firstDayOfWeek="1" formatString="DD/MM/YYYY" 
 									  dayNames="['D','L','M','M','J','V','S']"
 									  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+									 
 									  change="loadSaisieTemps()"						  
 									  />	
 					</s:HGroup>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					contentCreationComplete="init(event)"
+					>
+	
+	<fx:Declarations>
+		
+		<mx:RemoteObject id="absencesRO" destination="AbsenceService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true">
+			<mx:method name="annulerAbsence" result="annulerAbsenceHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+			<mx:method name="loadAbsences" result="loadAbsencesHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+		<mx:RemoteObject id="usersRO" destination="UtilisateurService" channelSet="{ChannelsUtils.instance.channelSet}" showBusyCursor="true"> 
+			<mx:method name="loadAllUtilisateurs" result="loadAllUtilisateursHandler(event)"  fault="Alert.show(event.fault.faultString)" />
+		</mx:RemoteObject>
+		
+		<s:DateTimeFormatter id="dateFormatter" dateTimePattern="dd/MM/yyyy"/>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import org.appa.planning.bo.Absence;
+			import org.appa.planning.bo.Utilisateur;
+			import org.appa.planning.ihm.reporting.ExportPopup;
+			import org.appa.planning.util.ChannelsUtils;
+			
+			[Bindable]
+			private var absences:ArrayCollection;
+			
+			[Bindable]
+			private var listePersonnes:ArrayCollection;
+			
+			public function init(event:Event):void
+			{
+				usersRO.getOperation("loadAllUtilisateurs").send();
+				
+				if(dateDeb == null){
+					return;
+				}
+				
+				var firstDayOfMonth:Date = new Date();
+				firstDayOfMonth.date = 1;
+				var lastDayOfMonth:Date = new Date();
+				lastDayOfMonth.month += 1;
+				lastDayOfMonth.date = 1;
+				lastDayOfMonth.date -= 1;
+				
+				dateDeb.text = dateFormatter.format(firstDayOfMonth);
+				dateFin.text = dateFormatter.format(lastDayOfMonth);
+				
+				this.absences = null;
+			}
+			
+			protected function  loadAllUtilisateursHandler(event:ResultEvent):void{
+				
+				this.listePersonnes = event.result as ArrayCollection;
+				//listePersonnes.addItemAt("Tous",0);
+			}
+						
+			protected function refreshAbsences():void
+			{
+				var date1:Date = DateField.stringToDate(dateDeb.text,'DD/MM/YYYY');
+				var date2:Date = DateField.stringToDate(dateFin.text,'DD/MM/YYYY');
+				date2.date += 1;
+				var person:String = personDropDown.selectedItem.id;
+				
+				absencesRO.getOperation("loadAbsences").send(person, date1, date2);
+			}
+			
+			
+			protected function loadAbsencesHandler(event:ResultEvent):void
+			{
+				this.absences = event.result as ArrayCollection;
+				
+				var total:Number = 0;
+				for(var key in absences){
+					total += absences[key].nbJours;
+				}
+				this.total.text = "  Total :       " + total + " jours" 
+			}
+						
+			protected function personLabelFunction(item:Object):String{
+				return item.prenom + " " + item.nom;
+			}
+			
+			protected function date_labelfunction(item:Object, column:GridColumn):String{
+				var debutPM:String = (item.debutPM)?'(A)':'';
+				var finAm:String = (item.finAM)?'(M)':'';
+				var dateDeb:String = DateField.dateToString(item.dateDebut,'DD/MM'); 
+				var dateFin:String = DateField.dateToString(item.dateFin,'DD/MM');
+				
+				if(dateDeb == dateFin){
+					return dateDeb + debutPM + finAm;
+				}
+				return dateDeb + debutPM + ' - ' + dateFin +finAm;
+			}
+			
+			public function annulerAbsence(item:Object):void{
+				absencesRO.getOperation("annulerAbsence").send(item.id);
+			}
+			
+			protected function annulerAbsenceHandler(event:ResultEvent):void{
+				refreshAbsences();
+			}
+			
+			protected function exportToCsv(event:MouseEvent):void
+			{
+				var result:String = "";
+				for(var key in absences){
+					var absence:Absence = absences[key];
+					result += absence.utilisateur.prenom + " " + absence.utilisateur.nom + 
+						";" + date_labelfunction(absence,null) +
+						";" + absence.nbJours + 
+						";" + absence.type + 
+						";" + absence.statut + "\r\n";
+				}
+				var popup:ExportPopup = new ExportPopup;
+				popup.text = result;
+				PopUpManager.addPopUp(popup,FlexGlobals.topLevelApplication as DisplayObject);
+				PopUpManager.centerPopUp(popup);
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:VerticalLayout/>	
+	</s:layout>
+	
+	<s:Spacer/>
+	<s:HGroup horizontalAlign="center" height="100%" width="100%">
+		
+		
+		<s:Panel title="Absences" width="560" height="100%">
+			
+			<s:VGroup width="100%" height="100%" paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10">
+				
+				<!-- filtres -->
+				<s:HGroup width="100%" height="30" verticalAlign="middle" horizontalAlign="center" gap="25">
+					<s:DropDownList id="personDropDown" change="refreshAbsences()" labelFunction="personLabelFunction" width="185" dataProvider="{this.listePersonnes}" >
+					</s:DropDownList>
+					<mx:DateField id="dateDeb"
+								  formatString="DD/MM/YYYY" 
+								  firstDayOfWeek="1"
+								  dayNames="['D','L','M','M','J','V','S']"
+								  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+								  change="refreshAbsences()"/>
+					<mx:DateField id="dateFin" 
+								  firstDayOfWeek="1" 
+								  formatString="DD/MM/YYYY" 
+								  dayNames="['D','L','M','M','J','V','S']"
+								  monthNames="['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre']"
+								   change="refreshAbsences()"/>
+					<s:Button label="Export" toolTip="Export au format CSV" click="exportToCsv(event)" />
+				</s:HGroup>
+				
+				<!-- grid -->
+				<s:DataGrid id="gridAbsences" width="100%" height="100%" dataProvider="{absences}" selectionMode="none">
+					<s:columns>
+						<s:ArrayList>
+							<!--<s:GridColumn width="250" headerText="Personne" dataField="utilisateur"/>-->
+							<s:GridColumn width="200" headerText="Date" labelFunction="date_labelfunction" dataField="dateDebut"/>
+							<s:GridColumn width="100" headerText="Nb Jours" dataField="nbJours"/>
+							<s:GridColumn width="100" dataField="type" headerText="Type" dataTipField="commentaire" showDataTips="true"/>
+							<s:GridColumn width="100" dataField="statut" headerText="Statut"/>
+							<s:GridColumn width="30">
+								<s:itemRenderer>
+									<fx:Component>
+										<s:GridItemRenderer>
+											<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+												<s:Image source="@Embed(source='assets/delete.jpg')" width="20" height="20" 
+														 toolTip="supprimer" buttonMode="true"
+														 click="outerDocument.annulerAbsence(data);"/>
+											</s:HGroup>
+										</s:GridItemRenderer>
+									</fx:Component>
+								</s:itemRenderer>
+							</s:GridColumn>
+						</s:ArrayList>
+					</s:columns>
+				</s:DataGrid>
+				
+				<!-- totaux -->
+				<s:Group>
+					<s:Label id="total" x="167" y="0" fontWeight="bold" text="Total :"/>	
+				</s:Group>
+					
+			</s:VGroup>
+			
+		</s:Panel>	
+		
+	</s:HGroup>
+</s:NavigatorContent>

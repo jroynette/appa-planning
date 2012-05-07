@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.appa.planning.bo.Absence;
+import org.appa.planning.bo.DemandeAbsence;
 import org.appa.planning.bo.Projet;
 import org.appa.planning.bo.SaisieTemps;
 import org.appa.planning.bo.StatutAbsence;
@@ -85,9 +85,9 @@ public class DataTestGenerator {
 
 
 	@Transactional
-	public Absence createAbsence(TypeAbsence type, StatutAbsence statut, String dateDeb,  String dateFin, String user) throws ParseException{
+	public DemandeAbsence createAbsence(TypeAbsence type, StatutAbsence statut, String dateDeb,  String dateFin, String user) throws ParseException{
 
-		Absence absence = new Absence();
+		DemandeAbsence absence = new DemandeAbsence();
 		absence.setStatut(statut);
 		absence.setType(type);
 		absence.setUtilisateur(utilisateurs.get(user));

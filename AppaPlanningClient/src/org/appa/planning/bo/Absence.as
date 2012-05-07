@@ -2,7 +2,7 @@ package org.appa.planning.bo
 {
 	import mx.controls.DateField;
 
-	[RemoteClass(alias="org.appa.planning.bo.Absence")]
+	[RemoteClass(alias="org.appa.planning.bo.DemandeAbsence")]
 	[Bindable]
 	public class Absence
 	{	
@@ -23,6 +23,8 @@ package org.appa.planning.bo
 		public var type:String;
 		
 		public var commentaire:String;
+		
+		public var nbJours:Number;
 		
 	}
 }
