@@ -176,6 +176,14 @@ public class SaisieTempsService {
 				calendarAbsence.setTime(absence.getDateDebut());
 				Date dateFinPlusUn = DateUtils.addDays(absence.getDateFin(), 1);
 				while(!DateUtils.isSameDay(calendarAbsence.getTime(), dateFinPlusUn)){
+
+					if(calendarAbsence.getTime().before(dateDebutSemaine) || calendarAbsence.getTime().after(dateFinSemaine)){
+						//on vérifie si le jour de l'absence est bien compris dans la semaine courante
+						calendarAbsence.add(Calendar.DATE, 1);
+						continue;
+
+					}
+
 					JourSemaine jourAbsence = JourSemaine.values()[calendarAbsence.get(Calendar.DAY_OF_WEEK)-1];
 
 					DemandeAbsence existingAbsence = planningHebdo.getAbsences().get(jourAbsence);
@@ -208,7 +216,7 @@ public class SaisieTempsService {
 			Integer nbHeures = saisie.getHeures();
 			String comment = saisie.getCommentaire();
 
-			System.out.println("!!!!" + saisie.getProjet().getNom() + " - " + calendarSaisie.getTime() + " -" + calendarSaisie.get(Calendar.DAY_OF_WEEK) + " - " + nbHeures);
+			//System.out.println("!!!!" + saisie.getProjet().getNom() + " - " + calendarSaisie.getTime() + " -" + calendarSaisie.get(Calendar.DAY_OF_WEEK) + " - " + nbHeures);
 
 			SaisieTempsProjet saisieProjet = projetsSaisis.get(projet.getNom());
 			JourSemaine jourSaisie = JourSemaine.values()[calendarSaisie.get(Calendar.DAY_OF_WEEK)-1];

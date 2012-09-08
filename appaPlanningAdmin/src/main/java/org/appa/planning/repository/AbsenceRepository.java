@@ -34,6 +34,12 @@ public interface AbsenceRepository extends JpaRepository<DemandeAbsence, Long> {
 	List<DemandeAbsence> findByUtilisateur(Long userId, Date dateDebut);
 
 	/**
+	 * @return la liste des absences de l'utilisateur apr�s la date sp�cifi�e
+	 */
+	@Query("from DemandeAbsence a where a.utilisateur.id = ?1 and a.dateDebut >= ?2 and a.type = ?3 order by a.dateDebut")
+	List<DemandeAbsence> findByUtilisateur(Long userId, Date dateDebut, TypeAbsence type);
+
+	/**
 	 * @return la liste des absences de l'utilisateur � afficher entre 2 dates
 	 * (les absences partielles, qui ne rentrent pas int�gralement dans la plage sont r�cup�r�es)
 	 */

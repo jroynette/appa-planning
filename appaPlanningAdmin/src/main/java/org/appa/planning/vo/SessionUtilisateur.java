@@ -7,11 +7,13 @@ import org.appa.planning.bo.DemandeAbsence;
 import org.appa.planning.bo.Utilisateur;
 
 public class SessionUtilisateur {
-	
+
 	private Utilisateur utilisateur;
-	
+
 	private List<DemandeAbsence> absences = new ArrayList<DemandeAbsence>();
-	
+
+	private List<DemandeAbsence> absencesFutures = new ArrayList<DemandeAbsence>();
+
 	private CompteurConges compteurs;
 
 	public Utilisateur getUtilisateur() {
@@ -36,5 +38,13 @@ public class SessionUtilisateur {
 
 	public void setCompteurs(CompteurConges compteurs) {
 		this.compteurs = compteurs;
+	}
+
+	public List<DemandeAbsence> getAbsencesFutures() {
+		return absencesFutures;
+	}
+
+	public void setAbsencesFutures(List<DemandeAbsence> absencesFutures) {
+		this.absencesFutures = absencesFutures;
 	}
 }

@@ -317,6 +317,15 @@ public class AbsenceService {
 
 		Collections.sort(session.getAbsences());
 
+		//ajout des absences sur la période suivante
+		List<DemandeAbsence> rttFuturs = absenceRepository.findByUtilisateur(utilisateur.getId(), DateUtils.addDays(getDateFinPeriodeRTT(dateAbsence),1), TypeAbsence.RTT);
+		List<DemandeAbsence> congesFuturs = absenceRepository.findByUtilisateur(utilisateur.getId(), DateUtils.addDays(getDateFinPeriodeConges(dateAbsence),1), TypeAbsence.CONGE);
+		List<DemandeAbsence> autresCongesFuturs = absenceRepository.findByUtilisateur(utilisateur.getId(), DateUtils.addDays(getDateFinPeriodeConges(dateAbsence),1), TypeAbsence.AUTRE);
+		session.getAbsencesFutures().addAll(rttFuturs);
+		session.getAbsencesFutures().addAll(congesFuturs);
+		session.getAbsencesFutures().addAll(autresCongesFuturs);
+		Collections.sort(session.getAbsencesFutures());
+
 		return session;
 	}
 
@@ -347,7 +356,7 @@ public class AbsenceService {
 		calendar.setTime(absence.getDateDebut());
 		//gestion des dates différentes dans le cloud
 		while(!DateUtils.isSameDay(calendar.getTime(),absence.getDateFin())){
-			System.out.println("!!!! " + calendar.getTime() + ">" + calendar.get(Calendar.DAY_OF_WEEK));
+			//System.out.println("!!!! " + calendar.getTime() + ">" + calendar.get(Calendar.DAY_OF_WEEK));
 			if(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7){
 				nbJours -= 1;
 			}
@@ -463,7 +472,14 @@ public class AbsenceService {
 	 */
 	public List<DemandeAbsence> loadAbsences(Long userId, Date dateDebut, Date dateFin) throws Exception{
 
-		List<DemandeAbsence> absences = this.absenceRepository.findByUtilisateur(userId, dateDebut, dateFin);
+		List<DemandeAbsence> absences = null;
+
+		if(userId == null){
+			absences = this.absenceRepository.findAll(dateDebut, dateFin);
+		}
+		else{
+			absences = this.absenceRepository.findByUtilisateur(userId, dateDebut, dateFin);
+		}
 
 		//calcul du nb de jours par absence
 		for (DemandeAbsence absence : absences) {
