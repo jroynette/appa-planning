@@ -63,7 +63,10 @@
 			protected function  loadAllUtilisateursHandler(event:ResultEvent):void{
 				
 				this.listePersonnes = event.result as ArrayCollection;
-				//listePersonnes.addItemAt("Tous",0);
+				var user:Utilisateur = new Utilisateur;
+				user.prenom = "Tous";
+				user.nom = "";
+				listePersonnes.addItemAt(user,0);
 			}
 						
 			protected function refreshAbsences():void
@@ -71,9 +74,13 @@
 				var date1:Date = DateField.stringToDate(dateDeb.text,'DD/MM/YYYY');
 				var date2:Date = DateField.stringToDate(dateFin.text,'DD/MM/YYYY');
 				date2.date += 1;
-				var person:String = personDropDown.selectedItem.id;
 				
-				absencesRO.getOperation("loadAbsences").send(person, date1, date2);
+				if(personDropDown.selectedItem.prenom == "Tous"){
+					absencesRO.getOperation("loadAbsences").send(null, date1, date2);
+				}else{
+					var person:String = personDropDown.selectedItem.id;
+					absencesRO.getOperation("loadAbsences").send(person, date1, date2);
+				}
 			}
 			
 			
@@ -140,7 +147,7 @@
 	<s:HGroup horizontalAlign="center" height="100%" width="100%">
 		
 		
-		<s:Panel title="Absences" width="560" height="100%">
+		<s:Panel title="Absences" width="770" height="100%">
 			
 			<s:VGroup width="100%" height="100%" paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10">
 				
@@ -167,7 +174,7 @@
 				<s:DataGrid id="gridAbsences" width="100%" height="100%" dataProvider="{absences}" selectionMode="none">
 					<s:columns>
 						<s:ArrayList>
-							<!--<s:GridColumn width="250" headerText="Personne" dataField="utilisateur"/>-->
+							<s:GridColumn width="200" headerText="Personne" dataField="utilisateur"/>
 							<s:GridColumn width="200" headerText="Date" labelFunction="date_labelfunction" dataField="dateDebut"/>
 							<s:GridColumn width="100" headerText="Nb Jours" dataField="nbJours"/>
 							<s:GridColumn width="100" dataField="type" headerText="Type" dataTipField="commentaire" showDataTips="true"/>

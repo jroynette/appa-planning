@@ -118,6 +118,7 @@
 			protected function loadSessionUtilisateurHandler(event:ResultEvent):void{
 				UserContext.instance.compteurs = event.result.compteurs;
 				UserContext.instance.absences = event.result.absences;
+				UserContext.instance.absences.addAll(event.result.absencesFutures);
 			}
 
 			protected function loadEvenementsHandler(event:ResultEvent):void{

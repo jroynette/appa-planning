@@ -35,6 +35,10 @@
 				UserContext.instance.user = user;
 				UserContext.instance.compteurs = event.result.compteurs;
 				UserContext.instance.absences = event.result.absences;
+				UserContext.instance.absences.addAll(event.result.absencesFutures);
+				
+				//pour le debug
+				//user.role = 'responsable';
 				
 				PopUpManager.removePopUp(this);
 			}

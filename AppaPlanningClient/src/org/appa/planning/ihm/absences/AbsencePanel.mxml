@@ -72,6 +72,7 @@
 			protected function loadSessionUtilisateurHandler(event:ResultEvent):void{
 				UserContext.instance.compteurs = event.result.compteurs;
 				UserContext.instance.absences = event.result.absences;
+				UserContext.instance.absences.addAll(event.result.absencesFutures);
 			}
 			
 			protected function refreshHisto():void{
@@ -89,8 +90,8 @@
 			protected function initHisto(event:FlexEvent):void
 			{
 				var now:Date = new Date();
-				var dateYearMoinsUn:Date = new Date(now.getTime() - 365 * 24 * 3600 * 1000);
-				dateDeb.selectedDate = dateYearMoinsUn;
+				var dateMoisMoinsUn:Date = new Date(now.getTime() - 30 * 24 * 3600 * 1000);
+				dateDeb.selectedDate = dateMoisMoinsUn;
 				dateFin.selectedDate = now;
 			}
 		]]>
