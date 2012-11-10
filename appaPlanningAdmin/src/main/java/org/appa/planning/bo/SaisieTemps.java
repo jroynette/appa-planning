@@ -134,8 +134,11 @@ public class SaisieTemps implements Serializable {
 
 	@Override
 	public String toString() {
-		return "["+ projet.getNom() + " - " + date + " - "
-				+ heures + "]";
-	}
+		if(projet != null){
+			return "["+ projet.getNom() + " - " + date + " - "
+					+ heures + "]";
+		}
+		return "";
 
+	}
 }
