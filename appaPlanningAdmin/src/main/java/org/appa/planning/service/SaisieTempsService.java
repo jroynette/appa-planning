@@ -65,13 +65,16 @@ public class SaisieTempsService {
 	public void saveSaisieTemps(String login, SaisieTempsSemaine planning){
 
 		Date dateDebutSemaine = planning.getDate();
-		Date dateFinSemaine = DateUtils.addDays(dateDebutSemaine, 7);
+		Date dateFinSemaine = DateUtils.addDays(dateDebutSemaine, 6);
 
 		//r�cup�ration de l'utilisateur
 		Utilisateur user = utilisateurRepository.findByLogin(login);
 
 		//suppression des temps saisis du lundi au dimanche sur la semaine
 		List<SaisieTemps> saisies = saisieTempsRepository.findByUtilisateur(user.getId(), dateDebutSemaine, dateFinSemaine);
+		for (SaisieTemps saisieTemps : saisies) {
+			System.out.println(saisieTemps.getDate() + " - " + saisieTemps.getHeures());
+		}
 		saisieTempsRepository.deleteInBatch(saisies);
 
 		//sauvegarde des nouveaux temps
